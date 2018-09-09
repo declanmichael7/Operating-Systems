@@ -50,7 +50,9 @@ var TSOS;
             sc = new TSOS.ShellCommand(this.shellPrompt, "prompt", "<string> - Sets the prompt.");
             this.commandList[this.commandList.length] = sc;
             //whereami
-            sc = new TSOS.ShellCommand(this.shellWhereAmI, "whereami", "Tells you where you are.");
+            sc = new TSOS.ShellCommand(this.shellWhereAmI, "whereami", "- Tells you where you are.");
+            this.commandList[this.commandList.length] = sc;
+            sc = new TSOS.ShellCommand(this.shellRescue, "rescue", "- Save the princess.");
             this.commandList[this.commandList.length] = sc;
             // ps  - list the running processes and their IDs
             // kill <id> - kills the specified process id.
@@ -214,11 +216,13 @@ var TSOS;
                         _StdOut.putText("I'm honestly not really sure what trace does");
                         break;
                     case "rot13":
-                        _StdOut.putText("rot13 shifts each character in your input 13 characters for encryption");
+                        _StdOut.putText("rot13 shifts each character in your input 13 characters");
                         break;
                     case "prompt":
-                        _StdOut.putText("prompt changes the symbol on the left to whatever you input");
+                        _StdOut.putText("prompt changes the symbol on the left");
                         break;
+                    case "whereami":
+                        _StdOut.putText("Tells you where you are");
                     // TODO: Make descriptive MANual page entries for the the rest of the shell commands here.
                     default:
                         _StdOut.putText("No manual entry for " + args[0] + ".");
@@ -272,6 +276,18 @@ var TSOS;
         };
         Shell.prototype.shellWhereAmI = function (args) {
             _StdOut.putText("You are between your keyboard and your chair");
+        };
+        Shell.prototype.shellRescue = function (args) {
+            if (RescueCount < 7) {
+                _StdOut.putText("Sorry, but our princess is in another castle!");
+                RescueCount++;
+            }
+            else if (RescueCount >= 7 && _SarcasticMode) {
+                _StdOut.putText("You already rescued the princess, genius");
+            }
+            else if (RescueCount >= 7) {
+                _StdOut.putText("Thank you! Your quest is over");
+            }
         };
         return Shell;
     }());
