@@ -49,9 +49,6 @@ var TSOS;
             // prompt <string>
             sc = new TSOS.ShellCommand(this.shellPrompt, "prompt", "<string> - Sets the prompt.");
             this.commandList[this.commandList.length] = sc;
-            // date
-            sc = new TSOS.ShellCommand(this.shellDate, "date", "Displays the current date and time.");
-            this.commandList[this.commandList.length] = sc;
             //whereami
             sc = new TSOS.ShellCommand(this.shellWhereAmI, "whereami", "Tells you where you are.");
             this.commandList[this.commandList.length] = sc;
@@ -272,10 +269,6 @@ var TSOS;
             else {
                 _StdOut.putText("Usage: prompt <string>  Please supply a string.");
             }
-        };
-        Shell.prototype.shellDate = function (args) {
-            var date = new Date();
-            _StdOut.putText(date.getDate());
         };
         Shell.prototype.shellWhereAmI = function (args) {
             _StdOut.putText("You are between your keyboard and your chair");

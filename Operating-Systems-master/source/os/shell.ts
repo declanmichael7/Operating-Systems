@@ -78,11 +78,6 @@ module TSOS {
                                   "<string> - Sets the prompt.");
             this.commandList[this.commandList.length] = sc;
 
-            // date
-            sc = new ShellCommand(this.shellDate,
-                                  "date",
-                                  "Displays the current date and time.");
-            this.commandList[this.commandList.length] = sc;
             
             //whereami
             sc = new ShellCommand(this.shellWhereAmI,
