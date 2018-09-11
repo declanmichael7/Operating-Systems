@@ -1,0 +1,17 @@
+\documentclass{article}
+\usepackage[utf8]{inputenc}
+
+\title{Lab1 Questions}
+\author{Declan Byrne}
+\date{September 10 2018}
+
+\begin{document}
+
+\maketitle
+
+\section{What are the advantages and disadvantages of using the same system call interface for manipulating both Files and devices?}
+It helps to have them both manipulated by the same interface because it makes it so that the OS doesn't have to run multiple processes to control both, and makes it easier for the user to manipulate the devices and files.
+However, this also makes it more possible for the OS to throw errors or crash if poorly coded because it has to figure out whether it should try manipulating the devices or the files.
+\section{Would it be possible for the user to develop a new command interpreter using the system call interface provided by the operating system? How?}
+Yes, this is possible, by making a virtual machine that can communicate with the existing CLI and make system calls that the OS carries out.
+\end{document}
