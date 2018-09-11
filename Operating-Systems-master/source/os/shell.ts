@@ -93,6 +93,10 @@ module TSOS {
             // ps  - list the running processes and their IDs
             // kill <id> - kills the specified process id.
 
+            sc = new ShellCommand(this.shellDate,
+                                  "date",
+                                  "- Displays the current date");
+            this.commandList[this.commandList.length] = sc
             //
             // Display the initial prompt.
             this.putPrompt();
@@ -335,6 +339,9 @@ module TSOS {
             else if (RescueCount >= 7) {
                 _StdOut.putText("Thank you! Your quest is over");
             }
+        }
+        public shellDate(args) {
+            _StdOut.putText("The current date is "+(date.getMonth()+1)+"/"+date.getDate());
         }
     }
 }

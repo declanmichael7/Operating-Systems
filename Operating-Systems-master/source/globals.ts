@@ -59,6 +59,9 @@ var _SarcasticMode: boolean = false;
 // You haven't rescued the princess yet
 var RescueCount: number = 0;
 
+// Setting up the Date() function
+var date = new Date();
+
 // Global Device Driver Objects - page 12
 var _krnKeyboardDriver; //  = null;
 

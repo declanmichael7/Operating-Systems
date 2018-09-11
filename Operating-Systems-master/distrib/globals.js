@@ -44,6 +44,8 @@ var _OsShell;
 var _SarcasticMode = false;
 // You haven't rescued the princess yet
 var RescueCount = 0;
+// Setting up the Date() function
+var date = new Date();
 // Global Device Driver Objects - page 12
 var _krnKeyboardDriver; //  = null;
 var _hardwareClockID = null;

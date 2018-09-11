@@ -56,6 +56,8 @@ var TSOS;
             this.commandList[this.commandList.length] = sc;
             // ps  - list the running processes and their IDs
             // kill <id> - kills the specified process id.
+            sc = new TSOS.ShellCommand(this.shellDate, "date", "- Displays the current date");
+            this.commandList[this.commandList.length] = sc;
             //
             // Display the initial prompt.
             this.putPrompt();
@@ -288,6 +290,9 @@ var TSOS;
             else if (RescueCount >= 7) {
                 _StdOut.putText("Thank you! Your quest is over");
             }
+        };
+        Shell.prototype.shellDate = function (args) {
+            _StdOut.putText("The current date is " + (date.getMonth() + 1) + "/" + date.getDate());
         };
         return Shell;
     }());
