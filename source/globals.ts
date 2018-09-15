@@ -59,8 +59,10 @@ var _SarcasticMode: boolean = false;
 // You haven't rescued the princess yet
 var RescueCount: number = 0;
 
-// Setting up the Date() function
-var date = new Date();
+// Setting up the Date() object so we can get the date and time
+var DateTime = new Date();
+
+
 
 //The current Status
 var StatusText: string = "Saving the Mushroom Kingdom";

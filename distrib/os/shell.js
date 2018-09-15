@@ -60,6 +60,9 @@ var TSOS;
             //date
             sc = new TSOS.ShellCommand(this.shellDate, "date", "- Displays the current date");
             this.commandList[this.commandList.length] = sc;
+            //time
+            sc = new TSOS.ShellCommand(this.shellTime, "time", "- Displays the current time");
+            this.commandList[this.commandList.length] = sc;
             //status <string>
             sc = new TSOS.ShellCommand(this.shellStatus, "status", "<string>- Set your status");
             this.commandList[this.commandList.length] = sc;
@@ -296,13 +299,17 @@ var TSOS;
             }
         };
         Shell.prototype.shellDate = function (args) {
-            _StdOut.putText("The current date is " + (date.getMonth() + 1) + "/" + date.getDate());
+            _StdOut.putText("The current date is " + (DateTime.getMonth() + 1) + "/" + DateTime.getDate());
+        };
+        Shell.prototype.shellTime = function (args) {
+            var Time = new Date();
+            _StdOut.putText("The current time is " + Time.getHours() + ":" + Time.getMinutes() + ":" + Time.getSeconds());
         };
         Shell.prototype.shellStatus = function (args) {
             if (args.length > 0) {
                 StatusText = args.join(' ');
                 _StdOut.putText("Status updated to: " + StatusText);
-                document.getElementById("Status").innerHTML = StatusText;
+                document.getElementById("Status").innerHTML = "Status: " + StatusText;
             }
             else {
                 _StdOut.putText("Usage: status <string>  Please supply a string");

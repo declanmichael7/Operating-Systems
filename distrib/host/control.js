@@ -81,7 +81,10 @@ var TSOS;
             // .. and call the OS Kernel Bootstrap routine.
             _Kernel = new TSOS.Kernel();
             _Kernel.krnBootstrap(); // _GLaDOS.afterStartup() will get called in there, if configured.
-            document.getElementById("Status").innerHTML = StatusText;
+            //Displays the initial value of the status
+            document.getElementById("Status").innerHTML = "Status: " + StatusText;
+            //Displays the current Date and Time
+            document.getElementById("DateTime").innerHTML = "Date/Time: " + DateTime;
         };
         Control.hostBtnHaltOS_click = function (btn) {
             Control.hostLog("Emergency halt", "host");

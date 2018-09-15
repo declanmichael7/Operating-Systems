@@ -91,6 +91,13 @@ module TSOS {
             } else {                      // If there are no interrupts and there is nothing being executed then just be idle. {
                 this.krnTrace("Idle");
             }
+
+            
+
+
+            //Updates the current Date and Time
+            var DateTime = new Date();
+            document.getElementById("DateTime").innerHTML = "Date/Time: " + DateTime.toString();
         }
 
 
