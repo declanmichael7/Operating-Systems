@@ -1,3 +1,4 @@
+"use strict";
 var TSOS;
 (function (TSOS) {
     var ShellCommand = /** @class */ (function () {

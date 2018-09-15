@@ -1,3 +1,4 @@
+"use strict";
 ///<reference path="../globals.ts" />
 ///<reference path="deviceDriver.ts" />
 var __extends = (this && this.__extends) || (function () {

@@ -1,3 +1,4 @@
+"use strict";
 ///<reference path="../globals.ts" />
 /* ------------
      Devices.ts

@@ -13,7 +13,7 @@
 // TODO: Write a base class / prototype for system services and let Shell inherit from it.
 var TSOS;
 (function (TSOS) {
-    var Shell = (function () {
+    var Shell = /** @class */ (function () {
         function Shell() {
             // Properties
             this.promptStr = ">";
@@ -49,9 +49,20 @@ var TSOS;
             // prompt <string>
             sc = new TSOS.ShellCommand(this.shellPrompt, "prompt", "<string> - Sets the prompt.");
             this.commandList[this.commandList.length] = sc;
+            //whereami
+            sc = new TSOS.ShellCommand(this.shellWhereAmI, "whereami", "- Tells you where you are.");
+            this.commandList[this.commandList.length] = sc;
+            //rescue
+            sc = new TSOS.ShellCommand(this.shellRescue, "rescue", "- Save the princess.");
+            this.commandList[this.commandList.length] = sc;
             // ps  - list the running processes and their IDs
             // kill <id> - kills the specified process id.
-            //
+            //date
+            sc = new TSOS.ShellCommand(this.shellDate, "date", "- Displays the current date");
+            this.commandList[this.commandList.length] = sc;
+            //status <string>
+            sc = new TSOS.ShellCommand(this.shellStatus, "status", "<string>- Set your status");
+            this.commandList[this.commandList.length] = sc;
             // Display the initial prompt.
             this.putPrompt();
         };
@@ -89,13 +100,13 @@ var TSOS;
             }
             else {
                 // It's not found, so check for curses and apologies before declaring the command invalid.
-                if (this.curses.indexOf("[" + TSOS.Utils.rot13(cmd) + "]") >= 0) {
+                if (this.curses.indexOf("[" + TSOS.Utils.rot13(cmd) + "]") >= 0) { // Check for curses.
                     this.execute(this.shellCurse);
                 }
-                else if (this.apologies.indexOf("[" + cmd + "]") >= 0) {
+                else if (this.apologies.indexOf("[" + cmd + "]") >= 0) { // Check for apologies.
                     this.execute(this.shellApology);
                 }
-                else {
+                else { // It's just a bad command. {
                     this.execute(this.shellInvalidCommand);
                 }
             }
@@ -192,9 +203,32 @@ var TSOS;
             if (args.length > 0) {
                 var topic = args[0];
                 switch (topic) {
-                    case "help":
-                        _StdOut.putText("Help displays a list of (hopefully) valid commands.");
+                    case "ver":
+                        _StdOut.putText("ver tells you what version of the Operating System you are running.");
                         break;
+                    case "help":
+                        _StdOut.putText("help displays a list of (hopefully) valid commands.");
+                        break;
+                    case "shutdown":
+                        _StdOut.putText("shutdown disables the OS");
+                        break;
+                    case "cls":
+                        _StdOut.putText("cls clears the text off of the screen");
+                        break;
+                    case "man":
+                        _StdOut.putText("man, the command you are using now, gives you details on each command");
+                        break;
+                    case "trace":
+                        _StdOut.putText("I'm honestly not really sure what trace does");
+                        break;
+                    case "rot13":
+                        _StdOut.putText("rot13 shifts each character in your input 13 characters");
+                        break;
+                    case "prompt":
+                        _StdOut.putText("prompt changes the symbol on the left");
+                        break;
+                    case "whereami":
+                        _StdOut.putText("Tells you where you are");
                     // TODO: Make descriptive MANual page entries for the the rest of the shell commands here.
                     default:
                         _StdOut.putText("No manual entry for " + args[0] + ".");
@@ -246,7 +280,35 @@ var TSOS;
                 _StdOut.putText("Usage: prompt <string>  Please supply a string.");
             }
         };
+        Shell.prototype.shellWhereAmI = function (args) {
+            _StdOut.putText("You are between your keyboard and your chair");
+        };
+        Shell.prototype.shellRescue = function (args) {
+            if (RescueCount < 7) {
+                _StdOut.putText("Sorry, but our princess is in another castle!");
+                RescueCount++;
+            }
+            else if (RescueCount >= 7 && _SarcasticMode) {
+                _StdOut.putText("You already rescued the princess, genius");
+            }
+            else if (RescueCount >= 7) {
+                _StdOut.putText("Thank you! Your quest is over");
+            }
+        };
+        Shell.prototype.shellDate = function (args) {
+            _StdOut.putText("The current date is " + (date.getMonth() + 1) + "/" + date.getDate());
+        };
+        Shell.prototype.shellStatus = function (args) {
+            if (args.length > 0) {
+                StatusText = args.join(' ');
+                _StdOut.putText("Status updated to: " + StatusText);
+                document.getElementById("Status").innerHTML = StatusText;
+            }
+            else {
+                _StdOut.putText("Usage: status <string>  Please supply a string");
+            }
+        };
         return Shell;
-    })();
+    }());
     TSOS.Shell = Shell;
 })(TSOS || (TSOS = {}));
