@@ -45,8 +45,31 @@ module TSOS {
                     _OsShell.handleInput(this.buffer);
                     // ... and reset our buffer.
                     this.buffer = "";
-                } else {
+                }
+                else if (chr === String.fromCharCode(8)) { //Backspace
+                    //Find the last character that was put on the screen
+                    var previousChar: string = this.buffer.charAt(this.buffer.length - 1);
+                    //Get the distance we have to go backwards
+                    var distance = _DrawingContext.measureText(this.currentFont, this.currentFontSize, previousChar);
+                    //Move us back to that point
+                    this.currentXPosition = this.currentXPosition - distance;
+                    //Clear the space
+                    _DrawingContext.clearRect(this.currentXPosition, (this.currentYPosition - (_DefaultFontSize +
+                            _DrawingContext.fontDescent(this.currentFont, this.currentFontSize))), distance, (_DefaultFontSize +
+                        _DrawingContext.fontDescent(this.currentFont, this.currentFontSize) +
+                        _FontHeightMargin));
+                    //And remove the character from the buffer
+                    this.buffer = this.buffer.slice(0, this.buffer.length - 1);
+                }
+                else {
                     // This is a "normal" character, so ...
+                    // ... make sure it doesn't need to go to the next line...
+                    if (this.currentXPosition > 495) {
+                        this.currentXPosition = 0;
+                        this.currentYPosition += _DefaultFontSize +
+                            _DrawingContext.fontDescent(this.currentFont, this.currentFontSize) +
+                            _FontHeightMargin;
+                    }
                     // ... draw it on the screen...
                     this.putText(chr);
                     // ... and add it to our buffer.
@@ -66,6 +89,12 @@ module TSOS {
             // UPDATE: Even though we are now working in TypeScript, char and string remain undistinguished.
             //         Consider fixing that.
             if (text !== "") {
+                if (this.currentXPosition > 495) {
+                    this.currentXPosition = 0;
+                    this.currentYPosition += _DefaultFontSize +
+                        _DrawingContext.fontDescent(this.currentFont, this.currentFontSize) +
+                        _FontHeightMargin;
+                }
                 // Draw the text at the current X and Y coordinates.
                 _DrawingContext.drawText(this.currentFont, this.currentFontSize, this.currentXPosition, this.currentYPosition, text);
                 // Move the current X position.

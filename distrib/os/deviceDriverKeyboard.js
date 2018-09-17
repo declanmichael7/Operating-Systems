@@ -62,7 +62,12 @@ var TSOS;
             }
             else if (((keyCode >= 48) && (keyCode <= 57)) || // digits
                 (keyCode == 32) || // space
-                (keyCode == 13)) { // enter
+                (keyCode == 8) || // backspace
+                (keyCode == 9) || // tab
+                (keyCode == 13) || // enter
+                (keyCode == 38) || // up arrow
+                (keyCode == 39) // down arrow
+            ) {
                 chr = String.fromCharCode(keyCode);
                 _KernelInputQueue.enqueue(chr);
             }

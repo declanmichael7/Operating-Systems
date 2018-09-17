@@ -66,6 +66,8 @@ var TSOS;
             //status <string>
             sc = new TSOS.ShellCommand(this.shellStatus, "status", "<string>- Set your status");
             this.commandList[this.commandList.length] = sc;
+            sc = new TSOS.ShellCommand(this.shellGameOver, "gameover", "- Ends your game");
+            this.commandList[this.commandList.length] = sc;
             // Display the initial prompt.
             this.putPrompt();
         };
@@ -222,7 +224,7 @@ var TSOS;
                         _StdOut.putText("man, the command you are using now, gives you details on each command");
                         break;
                     case "trace":
-                        _StdOut.putText("I'm honestly not really sure what trace does");
+                        _StdOut.putText("Disables messages in the host log");
                         break;
                     case "rot13":
                         _StdOut.putText("rot13 shifts each character in your input 13 characters");
@@ -232,6 +234,19 @@ var TSOS;
                         break;
                     case "whereami":
                         _StdOut.putText("Tells you where you are");
+                        break;
+                    case "rescue":
+                        _StdOut.putText("Defeat Bowser and save the princess (possibly)");
+                        break;
+                    case "date":
+                        _StdOut.putText("Displays the current date, according to your computer's clock");
+                        break;
+                    case "time":
+                        _StdOut.putText("Displays the current time, according to your computer's clock");
+                        break;
+                    case "status":
+                        _StdOut.putText("Update your status (Mario isn't always saving the world)");
+                        break;
                     // TODO: Make descriptive MANual page entries for the the rest of the shell commands here.
                     default:
                         _StdOut.putText("No manual entry for " + args[0] + ".");
@@ -314,6 +329,9 @@ var TSOS;
             else {
                 _StdOut.putText("Usage: status <string>  Please supply a string");
             }
+        };
+        Shell.prototype.shellGameOver = function (args) {
+            _Kernel.krnTrapError("Manual Crash");
         };
         return Shell;
     }());

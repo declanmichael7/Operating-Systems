@@ -180,7 +180,8 @@ module TSOS {
 
         public krnTrapError(msg) {
             Control.hostLog("OS ERROR - TRAP: " + msg);
-            // TODO: Display error on console, perhaps in some sort of colored screen. (Maybe blue?)
+            _StdOut.putText("Lives = 0. Game Over");
+            document.body.style.background = "blue";
             this.krnShutdown();
         }
     }
