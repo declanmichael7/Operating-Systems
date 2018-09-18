@@ -42,9 +42,11 @@ var TSOS;
                     // The enter key marks the end of a console command, so ...
                     // ... tell the shell ...
                     _OsShell.handleInput(this.buffer);
+                    //Before the buffer gets reset, put the command into the command history
                     previousCommand[previousCommand.length] = this.buffer;
                     // ... and reset our buffer.
                     this.buffer = "";
+                    //Also, reset the command index so enter resets everything
                     commandIndex = 0;
                 }
                 else if (chr === String.fromCharCode(8)) { //Backspace
@@ -67,22 +69,24 @@ var TSOS;
                     if (commandIndex < previousCommand.length) {
                         //First, you have to remove the command that is already there:
                         _DrawingContext.clearRect(_DrawingContext.measureText(this.currentFont, this.currentFontSize, promptStr), //but don't erase the prompt string
-                        (this.currentYPosition - (_DefaultFontSize + _DrawingContext.fontDescent(this.currentFont, this.currentFontSize))), 500, (_DefaultFontSize + _DrawingContext.fontDescent(this.currentFont, this.currentFontSize) + _FontHeightMargin));
+                        (this.currentYPosition - (_DefaultFontSize + _DrawingContext.fontDescent(this.currentFont, this.currentFontSize))), 500, (_DefaultFontSize + _DrawingContext.fontDescent(this.currentFont, this.currentFontSize) + _FontHeightMargin + 2));
                         //Reset your position to just next to the prompt
                         this.currentXPosition = _DrawingContext.measureText(this.currentFont, this.currentFontSize, promptStr);
                         //And reset the buffer
                         this.buffer = "";
+                        //Increase the commandIndex, so the more times the user presses up, the further back they go
                         commandIndex++;
+                        //Draw the command on the screen and put in the buffer
                         this.putText(previousCommand[previousCommand.length - commandIndex]);
                         this.buffer = previousCommand[previousCommand.length - commandIndex];
                     }
                 }
                 else if (chr === String.fromCharCode(40) && !isShifted) { //Down arrow (also, for some reason if you don't specify !isShifted, it prints off "("  )
-                    //First, make sure you aren't going past where the command history can go
-                    if (commandIndex >= previousCommand.length) {
+                    //First, make sure you can't go lower than 1, because that would result in you not having anything on screen (unless you want that, in which case I'll change this)
+                    if (commandIndex > 1) {
                         //First, you have to remove the command that is already there:
                         _DrawingContext.clearRect(_DrawingContext.measureText(this.currentFont, this.currentFontSize, promptStr), //but don't erase the prompt string
-                        (this.currentYPosition - (_DefaultFontSize + _DrawingContext.fontDescent(this.currentFont, this.currentFontSize))), 500, (_DefaultFontSize + _DrawingContext.fontDescent(this.currentFont, this.currentFontSize) + _FontHeightMargin));
+                        (this.currentYPosition - (_DefaultFontSize + _DrawingContext.fontDescent(this.currentFont, this.currentFontSize))), 500, (_DefaultFontSize + _DrawingContext.fontDescent(this.currentFont, this.currentFontSize) + _FontHeightMargin + 2));
                         //Reset your position to just next to the prompt
                         this.currentXPosition = _DrawingContext.measureText(this.currentFont, this.currentFontSize, promptStr);
                         //And reset the buffer
