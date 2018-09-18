@@ -18,7 +18,6 @@
 module TSOS {
     export class Shell {
         // Properties
-        public promptStr = ">";
         public commandList = [];
         public curses = "[fuvg],[cvff],[shpx],[phag],[pbpxfhpxre],[zbgureshpxre],[gvgf]";
         public apologies = "[sorry]";
@@ -123,7 +122,7 @@ module TSOS {
         }
 
         public putPrompt() {
-            _StdOut.putText(this.promptStr);
+            _StdOut.putText(promptStr);
         }
 
         public handleInput(buffer) {
@@ -352,7 +351,7 @@ module TSOS {
 
         public shellPrompt(args) {
             if (args.length > 0) {
-                _OsShell.promptStr = args[0];
+                promptStr = args[0];
             } else {
                 _StdOut.putText("Usage: prompt <string>  Please supply a string.");
             }

@@ -62,7 +62,16 @@ var RescueCount: number = 0;
 // Setting up the Date() object so we can get the date and time
 var DateTime = new Date();
 
+// Command History array
+var previousCommand = [];
 
+//For command history. An number that references how far back in their command history they are looking
+var commandIndex: number;
+
+var isShifted: boolean;
+
+//Set the initial proompt string
+var promptStr: string = ">";
 
 //The current Status
 var StatusText: string = "Saving the Mushroom Kingdom";

@@ -46,6 +46,13 @@ var _SarcasticMode = false;
 var RescueCount = 0;
 // Setting up the Date() object so we can get the date and time
 var DateTime = new Date();
+// Command History array
+var previousCommand = [];
+//For command history. An number that references how far back in their command history they are looking
+var commandIndex;
+var isShifted;
+//Set the initial proompt string
+var promptStr = ">";
 //The current Status
 var StatusText = "Saving the Mushroom Kingdom";
 // Global Device Driver Objects - page 12

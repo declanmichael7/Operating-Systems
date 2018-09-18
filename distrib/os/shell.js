@@ -16,7 +16,6 @@ var TSOS;
     var Shell = /** @class */ (function () {
         function Shell() {
             // Properties
-            this.promptStr = ">";
             this.commandList = [];
             this.curses = "[fuvg],[cvff],[shpx],[phag],[pbpxfhpxre],[zbgureshpxre],[gvgf]";
             this.apologies = "[sorry]";
@@ -72,7 +71,7 @@ var TSOS;
             this.putPrompt();
         };
         Shell.prototype.putPrompt = function () {
-            _StdOut.putText(this.promptStr);
+            _StdOut.putText(promptStr);
         };
         Shell.prototype.handleInput = function (buffer) {
             _Kernel.krnTrace("Shell Command~" + buffer);
@@ -292,7 +291,7 @@ var TSOS;
         };
         Shell.prototype.shellPrompt = function (args) {
             if (args.length > 0) {
-                _OsShell.promptStr = args[0];
+                promptStr = args[0];
             }
             else {
                 _StdOut.putText("Usage: prompt <string>  Please supply a string.");
