@@ -250,6 +250,12 @@ var TSOS;
                     case "status":
                         _StdOut.putText("Update your status (Mario isn't always saving the world)");
                         break;
+                    case "gameover":
+                        _StdOut.putText("Tests what happens when the OS finds an error");
+                        break;
+                    case "load":
+                        _StdOut.putText("Checks if the code in user input is valid Hex");
+                        break;
                     // TODO: Make descriptive MANual page entries for the the rest of the shell commands here.
                     default:
                         _StdOut.putText("No manual entry for " + args[0] + ".");
