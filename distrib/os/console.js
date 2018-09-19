@@ -64,6 +64,32 @@ var TSOS;
                         this.buffer = this.buffer.slice(0, this.buffer.length - 1);
                     }
                 }
+                else if (chr === String.fromCharCode(9)) { //Tab
+                    /* THIS IS MAKING EVERYTTHING FREEZE, SO WE'LL COME BACK TO IT
+                    //First, see if the text is blank, and if so input the first command in the list
+                    if (this.buffer = " ") {
+                        this.putText(_OsShell.commandList[0].command);
+                        this.buffer = _OsShell.commandList[0].command;
+                    }
+                    //Otherwise, we will have to erase what's already there in order to put our suggested commands in
+                    //But first, check to see if it's not an existing command ...
+                    /*if (_OsShell.commandList.indexOf(this.buffer)) {
+                        //Now, see if a command has those first few letters*/
+                    /*var match: boolean = false;
+                    var i: number = 0;
+                    
+                    while (!match && (i < _OsShell.commandList.length)) {
+                        //Check to see if tempStr matches the first x amount of letters of a command, where x is the length of tempStr
+                        if (this.buffer == _OsShell.commandList[i].command.slice(0, this.buffer.length)) {
+                            this.putText(_OsShell.commandList[i].command);
+                            this.buffer = _OsShell.commandList[i].command;
+                        }
+                        else {
+                            i++
+                        
+                    }
+                }*/
+                }
                 else if (chr === String.fromCharCode(38) && !isShifted) { //Up arrow (also, for some reason if you don't specify !isShifted, it prints off &)
                     //First, make sure you aren't going past where the command history can go
                     if (commandIndex < previousCommand.length) {

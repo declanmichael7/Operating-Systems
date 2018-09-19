@@ -65,7 +65,11 @@ var TSOS;
             //status <string>
             sc = new TSOS.ShellCommand(this.shellStatus, "status", "<string>- Set your status");
             this.commandList[this.commandList.length] = sc;
+            //gameover
             sc = new TSOS.ShellCommand(this.shellGameOver, "gameover", "- Ends your game");
+            this.commandList[this.commandList.length] = sc;
+            //load
+            sc = new TSOS.ShellCommand(this.shellLoad, "load", "- Loads the program in the \'User input\' field");
             this.commandList[this.commandList.length] = sc;
             // Display the initial prompt.
             this.putPrompt();
@@ -331,6 +335,38 @@ var TSOS;
         };
         Shell.prototype.shellGameOver = function (args) {
             _Kernel.krnTrapError("Manual Crash");
+        };
+        Shell.prototype.shellLoad = function (args) {
+            //A boolean to check if the command is valid. innocent until proven guilty
+            var validCommand = true;
+            program = document.getElementById("taProgramInput").value;
+            if (program === "") {
+                _StdOut.putText("There is no text in the input field");
+                validCommand = false;
+            }
+            else {
+                i = 0;
+                var letter;
+                while (i < program.length) {
+                    letter = program.charCodeAt(i);
+                    //If it isn't 0-9 or A-F, or a space
+                    if (((letter >= 48) && (letter <= 57)) ||
+                        ((letter >= 65) && (letter <= 70)) ||
+                        ((letter >= 97) && (letter <= 102)) ||
+                        letter == 32) {
+                        //We'll have something to do in here once we do more than just validate the code. For now, it will be left empty
+                    }
+                    else {
+                        _StdOut.putText("Character at index " + i + " is invalid");
+                        _StdOut.advanceLine();
+                        validCommand = false;
+                    }
+                    i++;
+                }
+                if (validCommand) {
+                    _StdOut.putText("Command is validated");
+                }
+            }
         };
         return Shell;
     }());

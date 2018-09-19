@@ -55,6 +55,12 @@ var isShifted;
 var promptStr = ">";
 //The current Status
 var StatusText = "Saving the Mushroom Kingdom";
+// A temporary string to help with command completion
+var tempStr;
+var match = false;
+var i = 0;
+//This should be a string, but typescript kept complaining ('type:string is not assignable to 'string'), so I made it any
+var program;
 // Global Device Driver Objects - page 12
 var _krnKeyboardDriver; //  = null;
 var _hardwareClockID = null;
