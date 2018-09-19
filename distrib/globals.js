@@ -57,7 +57,6 @@ var promptStr = ">";
 var StatusText = "Saving the Mushroom Kingdom";
 // A temporary string to help with command completion
 var tempStr;
-var match = false;
 var i = 0;
 //This should be a string, but typescript kept complaining ('type:string is not assignable to 'string'), so I made it any
 var program;

@@ -78,7 +78,6 @@ var StatusText: string = "Saving the Mushroom Kingdom";
 
 // A temporary string to help with command completion
 var tempStr: string;
-var match: boolean = false;
 var i: number = 0;
 
 //This should be a string, but typescript kept complaining ('type:string is not assignable to 'string'), so I made it any
