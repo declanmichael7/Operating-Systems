@@ -26,6 +26,10 @@ const KEYBOARD_IRQ: number = 1;
 // TODO: Make a global object and use that instead of the "_" naming convention in the global namespace.
 //
 var _CPU: TSOS.Cpu;  // Utilize TypeScript's type annotation system to ensure that _CPU is an instance of the Cpu class.
+var _Memory: TSOS.Memory;
+var _MemoryAccessor: TSOS.MemoryAccessor;
+
+var _MemoryManager: any = null;
 
 var _OSclock: number = 0;  // Page 23.
 
@@ -80,8 +84,9 @@ var StatusText: string = "Saving the Mushroom Kingdom";
 var tempStr: string;
 var i: number = 0;
 
-//This should be a string, but typescript kept complaining ('type:string is not assignable to 'string'), so I made it any
 var program: string;
+var noSpaces: string;
+var opCodes = [];
 
 // Global Device Driver Objects - page 12
 var _krnKeyboardDriver; //  = null;

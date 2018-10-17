@@ -1,4 +1,3 @@
-"use strict";
 ///<reference path="../globals.ts" />
 ///<reference path="queue.ts" />
 /* ------------
@@ -37,6 +36,7 @@ var TSOS;
             _krnKeyboardDriver = new TSOS.DeviceDriverKeyboard(); // Construct it.
             _krnKeyboardDriver.driverEntry(); // Call the driverEntry() initialization routine.
             this.krnTrace(_krnKeyboardDriver.status);
+            _MemoryManager = new TSOS.MemoryManager();
             //
             // ... more?
             //
@@ -82,6 +82,9 @@ var TSOS;
             else { // If there are no interrupts and there is nothing being executed then just be idle. {
                 this.krnTrace("Idle");
             }
+            //Updates the current Date and Time
+            var DateTime = new Date();
+            document.getElementById("DateTime").innerHTML = "Date/Time: " + DateTime.toString();
         };
         //
         // Interrupt Handling
@@ -155,7 +158,8 @@ var TSOS;
         };
         Kernel.prototype.krnTrapError = function (msg) {
             TSOS.Control.hostLog("OS ERROR - TRAP: " + msg);
-            // TODO: Display error on console, perhaps in some sort of colored screen. (Maybe blue?)
+            _StdOut.putText("Lives = 0. Game Over");
+            document.body.style.background = "blue";
             this.krnShutdown();
         };
         return Kernel;

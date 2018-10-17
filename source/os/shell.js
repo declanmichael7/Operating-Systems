@@ -1,4 +1,3 @@
-"use strict";
 ///<reference path="../globals.ts" />
 ///<reference path="../utils.ts" />
 ///<reference path="shellCommand.ts" />
@@ -17,7 +16,6 @@ var TSOS;
     var Shell = /** @class */ (function () {
         function Shell() {
             // Properties
-            this.promptStr = ">";
             this.commandList = [];
             this.curses = "[fuvg],[cvff],[shpx],[phag],[pbpxfhpxre],[zbgureshpxre],[gvgf]";
             this.apologies = "[sorry]";
@@ -50,20 +48,34 @@ var TSOS;
             // prompt <string>
             sc = new TSOS.ShellCommand(this.shellPrompt, "prompt", "<string> - Sets the prompt.");
             this.commandList[this.commandList.length] = sc;
-            // date
-            sc = new TSOS.ShellCommand(this.shellPrompt, "date", "Displays the current date and time.");
-            this.commandList[this.commandList.length] = sc;
             //whereami
-            sc = new TSOS.ShellCommand(this.shellPrompt, "whereami", "Tells you where you are.");
+            sc = new TSOS.ShellCommand(this.shellWhereAmI, "whereami", "- Tells you where you are.");
+            this.commandList[this.commandList.length] = sc;
+            //rescue
+            sc = new TSOS.ShellCommand(this.shellRescue, "rescue", "- Save the princess.");
             this.commandList[this.commandList.length] = sc;
             // ps  - list the running processes and their IDs
             // kill <id> - kills the specified process id.
-            //
+            //date
+            sc = new TSOS.ShellCommand(this.shellDate, "date", "- Displays the current date");
+            this.commandList[this.commandList.length] = sc;
+            //time
+            sc = new TSOS.ShellCommand(this.shellTime, "time", "- Displays the current time");
+            this.commandList[this.commandList.length] = sc;
+            //status <string>
+            sc = new TSOS.ShellCommand(this.shellStatus, "status", "<string>- Set your status");
+            this.commandList[this.commandList.length] = sc;
+            //gameover
+            sc = new TSOS.ShellCommand(this.shellGameOver, "gameover", "- Ends your game");
+            this.commandList[this.commandList.length] = sc;
+            //load
+            sc = new TSOS.ShellCommand(this.shellLoad, "load", "- Loads the program in the \'User input\' field");
+            this.commandList[this.commandList.length] = sc;
             // Display the initial prompt.
             this.putPrompt();
         };
         Shell.prototype.putPrompt = function () {
-            _StdOut.putText(this.promptStr);
+            _StdOut.putText(promptStr);
         };
         Shell.prototype.handleInput = function (buffer) {
             _Kernel.krnTrace("Shell Command~" + buffer);
@@ -215,13 +227,34 @@ var TSOS;
                         _StdOut.putText("man, the command you are using now, gives you details on each command");
                         break;
                     case "trace":
-                        _StdOut.putText("I'm honestly not really sure what trace does");
+                        _StdOut.putText("Disables messages in the host log");
                         break;
                     case "rot13":
-                        _StdOut.putText("rot13 shifts each character in your input 13 characters for encryption");
+                        _StdOut.putText("rot13 shifts each character in your input 13 characters");
                         break;
                     case "prompt":
-                        _StdOut.putText("prompt changes the symbol on the left to whatever you input");
+                        _StdOut.putText("prompt changes the symbol on the left");
+                        break;
+                    case "whereami":
+                        _StdOut.putText("Tells you where you are");
+                        break;
+                    case "rescue":
+                        _StdOut.putText("Defeat Bowser and save the princess (possibly)");
+                        break;
+                    case "date":
+                        _StdOut.putText("Displays the current date, according to your computer's clock");
+                        break;
+                    case "time":
+                        _StdOut.putText("Displays the current time, according to your computer's clock");
+                        break;
+                    case "status":
+                        _StdOut.putText("Update your status (Mario isn't always saving the world)");
+                        break;
+                    case "gameover":
+                        _StdOut.putText("Tests what happens when the OS finds an error");
+                        break;
+                    case "load":
+                        _StdOut.putText("Checks if the code in user input is valid Hex");
                         break;
                     // TODO: Make descriptive MANual page entries for the the rest of the shell commands here.
                     default:
@@ -268,10 +301,84 @@ var TSOS;
         };
         Shell.prototype.shellPrompt = function (args) {
             if (args.length > 0) {
-                _OsShell.promptStr = args[0];
+                promptStr = args[0];
             }
             else {
                 _StdOut.putText("Usage: prompt <string>  Please supply a string.");
+            }
+        };
+        Shell.prototype.shellWhereAmI = function (args) {
+            _StdOut.putText("You are between your keyboard and your chair");
+        };
+        Shell.prototype.shellRescue = function (args) {
+            if (RescueCount < 7) {
+                _StdOut.putText("Sorry, but our princess is in another castle!");
+                RescueCount++;
+            }
+            else if (RescueCount >= 7 && _SarcasticMode) {
+                _StdOut.putText("You already rescued the princess, genius");
+            }
+            else if (RescueCount >= 7) {
+                _StdOut.putText("Thank you! Your quest is over");
+            }
+        };
+        Shell.prototype.shellDate = function (args) {
+            _StdOut.putText("The current date is " + (DateTime.getMonth() + 1) + "/" + DateTime.getDate());
+        };
+        Shell.prototype.shellTime = function (args) {
+            var Time = new Date();
+            _StdOut.putText("The current time is " + Time.getHours() + ":" + Time.getMinutes() + ":" + Time.getSeconds());
+        };
+        Shell.prototype.shellStatus = function (args) {
+            if (args.length > 0) {
+                StatusText = args.join(' ');
+                _StdOut.putText("Status updated to: " + StatusText);
+                document.getElementById("Status").innerHTML = "Status: " + StatusText;
+            }
+            else {
+                _StdOut.putText("Usage: status <string>  Please supply a string");
+            }
+        };
+        Shell.prototype.shellGameOver = function (args) {
+            _Kernel.krnTrapError("Manual Crash");
+        };
+        Shell.prototype.shellLoad = function (args) {
+            //A boolean to check if the command is valid. innocent until proven guilty
+            var validCommand = true;
+            program = document.getElementById("taProgramInput").value;
+            if (program === "") {
+                _StdOut.putText("There is no text in the input field");
+                validCommand = false;
+            }
+            else {
+                i = 0;
+                var letter;
+                while (i < program.length) {
+                    letter = program.charCodeAt(i);
+                    //If it isn't 0-9 or A-F, or a space
+                    if (((letter >= 48) && (letter <= 57)) ||
+                        ((letter >= 65) && (letter <= 70)) ||
+                        ((letter >= 97) && (letter <= 102)) ||
+                        letter == 32) {
+                        //We'll have something to do in here once we do more than just validate the code. For now, it will be left empty
+                    }
+                    else {
+                        _StdOut.putText("Character at index " + i + " is invalid");
+                        _StdOut.advanceLine();
+                        validCommand = false;
+                    }
+                    i++;
+                }
+                /*if (validCommand) {
+                    //Remove any spaces in the string
+                    noSpaces = program.replace(" ", "");
+                    i = 0;
+                    while (noSpaces.length > 0) {
+                        opCodes[i] = noSpaces.slice(0, 1);
+                        noSpaces = noSpaces.slice(2, noSpaces.length);
+                        i++;
+                    }
+                }*/
             }
         };
         return Shell;

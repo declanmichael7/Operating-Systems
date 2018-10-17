@@ -1,4 +1,3 @@
-"use strict";
 ///<reference path="../globals.ts" />
 /* ------------
      CPU.ts

@@ -10,17 +10,21 @@
 var TSOS;
 (function (TSOS) {
     var Console = /** @class */ (function () {
-        function Console(currentFont, currentFontSize, currentXPosition, currentYPosition, buffer) {
+        function Console(currentFont, currentFontSize, currentXPosition, currentYPosition, buffer, lineHeight) {
             if (currentFont === void 0) { currentFont = _DefaultFontFamily; }
             if (currentFontSize === void 0) { currentFontSize = _DefaultFontSize; }
             if (currentXPosition === void 0) { currentXPosition = 0; }
             if (currentYPosition === void 0) { currentYPosition = _DefaultFontSize; }
             if (buffer === void 0) { buffer = ""; }
+            if (lineHeight === void 0) { lineHeight = (_DefaultFontSize +
+                _DrawingContext.fontDescent(currentFont, currentFontSize) +
+                _FontHeightMargin); }
             this.currentFont = currentFont;
             this.currentFontSize = currentFontSize;
             this.currentXPosition = currentXPosition;
             this.currentYPosition = currentYPosition;
             this.buffer = buffer;
+            this.lineHeight = lineHeight;
         }
         Console.prototype.init = function () {
             this.clearScreen();
@@ -267,6 +271,32 @@ var TSOS;
             // UPDATE: Even though we are now working in TypeScript, char and string remain undistinguished.
             //         Consider fixing that.
             if (text !== "") {
+                //Scrolling: If we reach a point too low on the canvas, then read what currently is on the screen, clear it, and then paste it a row up
+                /*if (this.currentYPosition >= 540) {
+
+                    for (i = 0; i < 540;) {
+                        var imgData = _DrawingContext.getImageData(0, (i+this.lineHeight), 500, (i+(2*this.lineHeight))
+
+                        )
+                        _DrawingContext.putImageData(imgData, 0, i);
+                        i = (i + this.lineHeight);
+                    }
+                }
+                    /*
+                //Save the contents of the canvas           //Top Corner:
+                var imgData = _DrawingContext.getImageData(4,
+                                                            //Top Corner: The height of a line
+                                                            (_DefaultFontSize +
+                                                             _DrawingContext.fontDescent(this.currentFont, this.currentFontSize) +
+                                                             _FontHeightMargin),
+                                                            //Bottom corner:
+                                                            500,563)
+                //clear the screen
+                this.clearScreen();
+                //Now put the previously saved image on the canvas
+                    _DrawingContext.putImageData(imgData, 4, 0)
+                    this.currentYPosition = this.currentYPosition -33
+                }*/
                 // Draw the text at the current X and Y coordinates.
                 _DrawingContext.drawText(this.currentFont, this.currentFontSize, this.currentXPosition, this.currentYPosition, text);
                 // Move the current X position.
@@ -275,16 +305,20 @@ var TSOS;
             }
         };
         Console.prototype.advanceLine = function () {
+            if (this.currentYPosition >= 540) {
+                for (i = 0; i < 540;) {
+                    i = (i + this.lineHeight);
+                    var imgData = _DrawingContext.getImageData(0, i, 500, (i + this.lineHeight));
+                    _DrawingContext.putImageData(imgData, 0, i);
+                }
+            }
             this.currentXPosition = 0;
             /*
              * Font size measures from the baseline to the highest point in the font.
              * Font descent measures from the baseline to the lowest point in the font.
              * Font height margin is extra spacing between the lines.
              */
-            this.currentYPosition += _DefaultFontSize +
-                _DrawingContext.fontDescent(this.currentFont, this.currentFontSize) +
-                _FontHeightMargin;
-            // TODO: Handle scrolling. (iProject 1)
+            this.currentYPosition += this.lineHeight;
         };
         return Console;
     }());

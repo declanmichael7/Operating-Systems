@@ -436,10 +436,18 @@ module TSOS {
                     }
                     i++;
                 }
-                if (validCommand) {
-                    _StdOut.putText("Command is validated");
-                }
+                /*if (validCommand) {
+                    //Remove any spaces in the string
+                    noSpaces = program.replace(" ", "");
+                    i = 0;
+                    while (noSpaces.length > 0) {
+                        opCodes[i] = noSpaces.slice(0, 1);
+                        noSpaces = noSpaces.slice(2, noSpaces.length);
+                        i++;
+                    }
+                }*/
             }
+
         }
     }
 }
