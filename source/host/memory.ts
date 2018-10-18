@@ -2,7 +2,8 @@
 
 module TSOS {
     export class Memory {
-        constructor(public maxLength: number = 255
+        constructor(public maxLength: number = 255,
+            public lengthUsed: number = 0
         ) {
         }
 

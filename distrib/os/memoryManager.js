@@ -6,7 +6,13 @@ var TSOS;
             if (partition0 === void 0) { partition0 = true; }
             this.partition0 = partition0;
         }
-        MemoryManager.prototype.init = function () {
+        MemoryManager.prototype.allocate = function () {
+            if (this.partition0) {
+                this.partition0 = false;
+            }
+        };
+        MemoryManager.prototype.deallocate = function (partition) {
+            partition = true;
         };
         return MemoryManager;
     }());

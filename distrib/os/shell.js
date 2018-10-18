@@ -359,26 +359,36 @@ var TSOS;
                     if (((letter >= 48) && (letter <= 57)) ||
                         ((letter >= 65) && (letter <= 70)) ||
                         ((letter >= 97) && (letter <= 102)) ||
-                        letter == 32) {
-                        //We'll have something to do in here once we do more than just validate the code. For now, it will be left empty
+                        (letter == 32)) {
                     }
                     else {
-                        _StdOut.putText("Character at index " + i + " is invalid");
+                        _StdOut.putText("Character at index " + (i + 1) + " is invalid");
                         _StdOut.advanceLine();
                         validCommand = false;
                     }
                     i++;
                 }
-                /*if (validCommand) {
-                    //Remove any spaces in the string
-                    noSpaces = program.replace(" ", "");
+                if (validCommand) {
                     i = 0;
-                    while (noSpaces.length > 0) {
-                        opCodes[i] = noSpaces.slice(0, 1);
-                        noSpaces = noSpaces.slice(2, noSpaces.length);
+                    var ind = 0;
+                    var char1;
+                    var char2;
+                    while (i < program.length) {
+                        if (((i - 1) % 3) == 0) {
+                            char1 = program.charAt(i - 1);
+                            char2 = program.charAt(i);
+                            _MemoryAccessor.writeMem(char1, char2, ind);
+                            ind++;
+                        }
                         i++;
                     }
-                }*/
+                    _Memory.lengthUsed = ind - 1;
+                    i = 0;
+                    while (i < _Memory.lengthUsed) {
+                        _StdOut.putText(_Memory[i] + " ");
+                        i++;
+                    }
+                }
             }
         };
         return Shell;
