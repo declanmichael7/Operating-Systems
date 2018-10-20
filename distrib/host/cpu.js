@@ -42,6 +42,15 @@ var TSOS;
             _Kernel.krnTrace('CPU cycle');
             // TODO: Accumulate CPU usage and profiling statistics here.
             // Do the real work here. Be sure to set this.isExecuting appropriately.
+            _Kernel.krnTrace(_Memory[this.PC]);
+            this.PC++;
+            if (this.PC > _Memory.lengthUsed) {
+                this.isExecuting = false;
+            }
+        };
+        Cpu.prototype.runProgram = function (pid) {
+            _Process1.state = "Running";
+            _CPU.isExecuting = true;
         };
         return Cpu;
     }());

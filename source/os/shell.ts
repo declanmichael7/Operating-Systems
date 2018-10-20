@@ -123,6 +123,11 @@ module TSOS {
                                   "- Loads the program in the \'User input\' field");
             this.commandList[this.commandList.length] = sc;
 
+            sc = new ShellCommand(this.shellRun,
+                                  "run",
+                                  "- Runs a program in memory");
+            this.commandList[this.commandList.length] = sc;
+
             // Display the initial prompt.
             this.putPrompt();
         }
@@ -212,7 +217,6 @@ module TSOS {
             }
             return retVal;
         }
-
         //
         // Shell Command Functions.  Kinda not part of Shell() class exactly, but
         // called from here, so kept here to avoid violating the law of least astonishment.
@@ -436,6 +440,10 @@ module TSOS {
                     i++;
                 }
                 if (validCommand) {
+                    /*if (_MemoryManager.partition0) {
+                        _MemoryManager.allocate();
+                    }*/
+                    _Process1 = new Pcb("pid1", 0);
                     i = 0;
                     var ind = 0;
                     var char1: string;
@@ -452,14 +460,13 @@ module TSOS {
                     }
                     _Memory.lengthUsed = ind - 1;
                     i = 0;
-                    while (i < _Memory.lengthUsed) {
-                        _StdOut.putText(_Memory[i] + " ");
-                        i++;
-                    }
+                    _StdOut.putText(_Process1.pid);
                 }
-                
             }
+        }
 
+        public shellRun(args) {
+            _CPU.runProgram(args);
         }
     }
 }

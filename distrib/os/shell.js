@@ -71,6 +71,8 @@ var TSOS;
             //load
             sc = new TSOS.ShellCommand(this.shellLoad, "load", "- Loads the program in the \'User input\' field");
             this.commandList[this.commandList.length] = sc;
+            sc = new TSOS.ShellCommand(this.shellRun, "run", "- Runs a program in memory");
+            this.commandList[this.commandList.length] = sc;
             // Display the initial prompt.
             this.putPrompt();
         };
@@ -369,6 +371,10 @@ var TSOS;
                     i++;
                 }
                 if (validCommand) {
+                    /*if (_MemoryManager.partition0) {
+                        _MemoryManager.allocate();
+                    }*/
+                    _Process1 = new TSOS.Pcb("pid1", 0);
                     i = 0;
                     var ind = 0;
                     var char1;
@@ -384,12 +390,12 @@ var TSOS;
                     }
                     _Memory.lengthUsed = ind - 1;
                     i = 0;
-                    while (i < _Memory.lengthUsed) {
-                        _StdOut.putText(_Memory[i] + " ");
-                        i++;
-                    }
+                    _StdOut.putText(_Process1.pid);
                 }
             }
+        };
+        Shell.prototype.shellRun = function (args) {
+            _CPU.runProgram(args);
         };
         return Shell;
     }());
