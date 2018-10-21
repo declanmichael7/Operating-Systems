@@ -317,7 +317,7 @@ module TSOS {
          }
 
         public advanceLine(): void {
-            if (this.currentYPosition >= 540) {
+            /*if (this.currentYPosition >= 540) {
 
                 for (i = 0; i < 540;) {
                     i = (i + this.lineHeight);
@@ -326,7 +326,7 @@ module TSOS {
                     )
                     _DrawingContext.putImageData(imgData, 0, i);
                 }
-            }
+            }*/
             this.currentXPosition = 0;
             /*
              * Font size measures from the baseline to the highest point in the font.

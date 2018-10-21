@@ -372,7 +372,7 @@ var TSOS;
                 }
                 if (validCommand) {
                     _Process1 = new TSOS.Pcb("pid1", 0);
-                    _StdOut.putText("pid1");
+                    _StdOut.putText(_Process1.pid);
                     i = 0;
                     var ind = 0;
                     var indHex;
@@ -390,6 +390,7 @@ var TSOS;
                         i++;
                     }
                     _Memory.lengthUsed = ind - 1;
+                    _Kernel.krnTrace("Length = " + _Memory.lengthUsed);
                     for (i = _Memory.lengthUsed; i < 256; i++) {
                         _MemoryAccessor.writeMem('00', i);
                         indHex = TSOS.Utils.toHex(i);

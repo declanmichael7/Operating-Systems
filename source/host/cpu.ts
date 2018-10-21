@@ -41,22 +41,52 @@ module TSOS {
             // TODO: Accumulate CPU usage and profiling statistics here.
             // Do the real work here. Be sure to set this.isExecuting appropriately.
             _Kernel.krnTrace(_Memory[this.PC]);
+            //LDA
             if (_Memory[this.PC] == 'A9') {
                 this.Acc = _Memory[this.PC + 1];
-                document.getElementById('Acc').innerHTML = ""+this.Acc;
-                //For now this is just +1. Change later
+                document.getElementById('Acc').innerHTML = "" + this.Acc;
                 this.PC = this.PC + 1;
                 _Kernel.krnTrace('Acc = ' + this.Acc);
             }
+            //LDA
             else if (_Memory[this.PC] == 'AD') {
-                this.Acc = _Memory[_Memory[this.PC + 1]];
+                this.Acc = _Memory[Utils.toDecimal(_Memory[this.PC + 1])];
                 this.PC = this.PC + 1;
-                _Kernel.krnTrace('Acc = ' + this.Acc);
+                document.getElementById('Acc').innerHTML = "" + this.Acc;
+            }
+            //STA
+            else if (_Memory[this.PC] == '8D') {
+                _Memory[Utils.toHex(_Memory[this.PC + 1])] = this.Acc;
+                document.getElementById(Utils.toHex(_Memory[this.PC + 1])).innerHTML = "" + this.Acc;
+                this.PC = this.PC + 1;
+            }
+            //LDX
+            else if (_Memory[this.PC] == 'A2') {
+                this.Xreg = _Memory[this.PC + 1];
+                document.getElementById('Xreg').innerHTML = "" + this.Xreg;
+                this.PC = this.PC + 1;
+                _Kernel.krnTrace('Xreg = ' + this.Xreg);
+            }
+            //LDX
+            else if (_Memory[this.PC] == 'AE') {
+                this.Xreg = _Memory[Utils.toDecimal(_Memory[this.PC + 1])];
+                this.PC = this.PC + 1;
+                document.getElementById('Xreg').innerHTML = "" + this.Xreg;
             }
             this.PC++;
             document.getElementById('PC').innerHTML = "" + this.PC;
             if (this.PC > _Memory.lengthUsed) {
                 this.isExecuting = false;
+                _Process1.state = 'Complete';
+                //Reset the values of everything
+                this.init();
+                //update the CPU table
+                document.getElementById('PC').innerHTML = "" + 0;
+                document.getElementById('Acc').innerHTML = "" + 0;
+                document.getElementById('Xreg').innerHTML = "" + 0;
+                document.getElementById('Yreg').innerHTML = "" + 0;
+                document.getElementById('Zflag').innerHTML = "" + 0;
+
             }
         }
 
