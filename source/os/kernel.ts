@@ -62,7 +62,7 @@ module TSOS {
             }
 
             //Set a default command in the program input field  
-            document.getElementById("taProgramInput").innerHTML = "A2 01 A0 03 FF A0 04 FF A2 02 A0 14 FF 00 48 45 59 ";
+            document.getElementById("taProgramInput").innerHTML = "A2 01 A0 03 FF A0 04 FF A2 02 A0 0E FF 00 48 45 59 ";
         }
 
         public krnShutdown() {

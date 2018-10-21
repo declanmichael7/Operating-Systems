@@ -125,7 +125,7 @@ module TSOS {
 
             sc = new ShellCommand(this.shellRun,
                                   "run",
-                                  "- Runs a program in memory");
+                                  "<pid>- Runs a program in memory");
             this.commandList[this.commandList.length] = sc;
 
             // Display the initial prompt.
@@ -440,16 +440,21 @@ module TSOS {
                     i++;
                 }
                 if (validCommand) {
-                    _Process1 = new Pcb("pid1", 0);
-                    _StdOut.putText(_Process1.pid);
+                    _Process1 = new Pcb("0", 0);
+                    _StdOut.putText("pid:" +_Process1.pid);
                     i = 0;
                     var ind = 0;
                     var indHex: string;
                     var opCode: string;
-                    while (i <= program.length + 2) {
+                    while (i <= program.length) {
                         opCode = program.charAt(i - 1) + program.charAt(i);
                         if (((i - 1) % 3) == 0) {
-                            var indHex = Utils.toHex(ind);
+                            if (ind <= 15) {
+                                var indHex = '0' + Utils.toHex(ind);
+                            }
+                            else {
+                                var indHex = Utils.toHex(ind);
+                            }
                             _Kernel.krnTrace(indHex);
                             _MemoryAccessor.writeMem(opCode, ind);
                             document.getElementById(indHex).innerHTML = opCode;
@@ -457,11 +462,16 @@ module TSOS {
                         }
                         i++
                     }
-                    _Memory.lengthUsed = ind - 1;
+                    _Memory.lengthUsed = ind;
                     _Kernel.krnTrace("Length = " + _Memory.lengthUsed);
                     for (i = _Memory.lengthUsed; i < 256; i++) {
                         _MemoryAccessor.writeMem('00', i);
-                        indHex = Utils.toHex(i);
+                        if (i <= 15) {
+                            indHex = '0' + Utils.toHex(i);
+                        }
+                        else {
+                            indHex = Utils.toHex(i);
+                        }
                         document.getElementById(indHex).innerHTML = '00';
                     }
                     i = 0;
@@ -470,7 +480,13 @@ module TSOS {
         }
 
         public shellRun(args) {
-            _CPU.runProgram(args);
+            if (args == "") {
+                _StdOut.putText("Please give a process id");
+                _StdOut.advanceLine();
+            }
+            else {
+                _CPU.runProgram(args);
+            }
         }
     }
 }

@@ -51,16 +51,16 @@ module TSOS {
             //LDA
             else if (_Memory[this.PC] == 'AD') {
                 this.Acc = _Memory[Utils.toDecimal(_Memory[this.PC + 1])];
-                this.PC = this.PC + 1;
+                this.PC = this.PC + 2;
                 document.getElementById('Acc').innerHTML = "" + this.Acc;
             }
             //ADC
 
             //STA
             else if (_Memory[this.PC] == '8D') {
-                _Memory[_Memory[this.PC + 1]] = this.Acc;
-                document.getElementById(Utils.toHex(_Memory[this.PC + 1])).innerHTML = "" + this.Acc;
-                this.PC = this.PC + 1;
+                _Memory[Utils.toDecimal(_Memory[this.PC + 1])] = this.Acc;
+                document.getElementById(_Memory[Utils.toDecimal(this.PC + 1)]).innerHTML = "" + this.Acc;
+                this.PC = this.PC + 2;
             }
             //LDX
             else if (_Memory[this.PC] == 'A2') {
@@ -72,7 +72,7 @@ module TSOS {
             //LDX
             else if (_Memory[this.PC] == 'AE') {
                 this.Xreg = _Memory[Utils.toDecimal(_Memory[this.PC + 1])];
-                this.PC = this.PC + 1;
+                this.PC = this.PC + 2;
                 document.getElementById('Xreg').innerHTML = "" + this.Xreg;
                 _Kernel.krnTrace("Xreg = " + this.Xreg);
             }
@@ -86,7 +86,7 @@ module TSOS {
             //LDY
             else if (_Memory[this.PC] == 'AC') {
                 this.Yreg = _Memory[Utils.toDecimal(_Memory[this.PC + 1])];
-                this.PC = this.PC + 1;
+                this.PC = this.PC + 2;
                 document.getElementById('Yreg').innerHTML = "" + this.Yreg;
                 _Kernel.krnTrace('Yreg = ' + this.Yreg);
             }
@@ -97,17 +97,19 @@ module TSOS {
             //BRK
             else if (_Memory[this.PC] == '00') {
                 _Kernel.krnTrace("Break");
-                this.isExecuting = false;
+                //this.isExecuting = false;
             }
             //CPX
-
+            
             //BNE
 
             //INC
-           /* else if (_Memory[this.PC] == 'EE') {
-                Utils.addHex(_Memory[this.PC + 1], 1);
-                document.getElementById(_Memory[this.PC + 1]).innerHTML = _Memory[_Memory[this.PC + 1]];
-            }*/
+           else if (_Memory[this.PC] == 'EE') {
+                Utils.addHex(_Memory[Utils.toDecimal(this.PC + 1)], 1);
+                console.log(_Memory[Utils.toDecimal(this.PC + 1)]);
+                document.getElementById(_Memory[Utils.toDecimal(this.PC + 1)]).innerHTML = ""+ _Memory[_Memory[Utils.toDecimal(this.PC + 1)]];
+                this.PC = this.PC + 2;
+            }
             //SYS
             else if (_Memory[this.PC] == 'FF') {
                 if (this.Xreg == 1) {
@@ -123,7 +125,7 @@ module TSOS {
             }
             this.PC++;
             document.getElementById('PC').innerHTML = "" + this.PC;
-            if (this.PC > _Memory.lengthUsed) {
+            if (this.PC >= _Memory.lengthUsed) {
                 this.isExecuting = false;
                 _Process1.state = 'Complete';
                 //Reset the values of everything
@@ -138,8 +140,10 @@ module TSOS {
         }
 
         public runProgram(pid) {
-            _Process1.state = "Running";
-            _CPU.isExecuting = true;
+            if (pid == 0) {
+                _Process1.state = "Running";
+                _CPU.isExecuting = true;
+            }
         }
     }
 }

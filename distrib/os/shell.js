@@ -71,7 +71,7 @@ var TSOS;
             //load
             sc = new TSOS.ShellCommand(this.shellLoad, "load", "- Loads the program in the \'User input\' field");
             this.commandList[this.commandList.length] = sc;
-            sc = new TSOS.ShellCommand(this.shellRun, "run", "- Runs a program in memory");
+            sc = new TSOS.ShellCommand(this.shellRun, "run", "<pid>- Runs a program in memory");
             this.commandList[this.commandList.length] = sc;
             // Display the initial prompt.
             this.putPrompt();
@@ -371,16 +371,21 @@ var TSOS;
                     i++;
                 }
                 if (validCommand) {
-                    _Process1 = new TSOS.Pcb("pid1", 0);
-                    _StdOut.putText(_Process1.pid);
+                    _Process1 = new TSOS.Pcb("0", 0);
+                    _StdOut.putText("pid:" + _Process1.pid);
                     i = 0;
                     var ind = 0;
                     var indHex;
                     var opCode;
-                    while (i <= program.length + 2) {
+                    while (i <= program.length) {
                         opCode = program.charAt(i - 1) + program.charAt(i);
                         if (((i - 1) % 3) == 0) {
-                            var indHex = TSOS.Utils.toHex(ind);
+                            if (ind <= 15) {
+                                var indHex = '0' + TSOS.Utils.toHex(ind);
+                            }
+                            else {
+                                var indHex = TSOS.Utils.toHex(ind);
+                            }
                             _Kernel.krnTrace(indHex);
                             _MemoryAccessor.writeMem(opCode, ind);
                             document.getElementById(indHex).innerHTML = opCode;
@@ -388,11 +393,16 @@ var TSOS;
                         }
                         i++;
                     }
-                    _Memory.lengthUsed = ind - 1;
+                    _Memory.lengthUsed = ind;
                     _Kernel.krnTrace("Length = " + _Memory.lengthUsed);
                     for (i = _Memory.lengthUsed; i < 256; i++) {
                         _MemoryAccessor.writeMem('00', i);
-                        indHex = TSOS.Utils.toHex(i);
+                        if (i <= 15) {
+                            indHex = '0' + TSOS.Utils.toHex(i);
+                        }
+                        else {
+                            indHex = TSOS.Utils.toHex(i);
+                        }
                         document.getElementById(indHex).innerHTML = '00';
                     }
                     i = 0;
@@ -400,7 +410,13 @@ var TSOS;
             }
         };
         Shell.prototype.shellRun = function (args) {
-            _CPU.runProgram(args);
+            if (args == "") {
+                _StdOut.putText("Please give a process id");
+                _StdOut.advanceLine();
+            }
+            else {
+                _CPU.runProgram(args);
+            }
         };
         return Shell;
     }());
