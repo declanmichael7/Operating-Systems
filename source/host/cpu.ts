@@ -120,7 +120,6 @@ module TSOS {
                     document.getElementById('Zflag').innerHTML = "" + this.Zflag;
                 }
                 this.PC = this.PC + 2;
-                document.getElementById('PC')
             }
             //BNE
             else if (_Memory[this.PC] == 'D0') {
