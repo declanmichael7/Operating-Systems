@@ -50,6 +50,21 @@ var TSOS;
         Utils.toDecimal = function (hex) {
             return parseInt(hex, 16);
         };
+        Utils.hextoString = function (hex) {
+            var hex = hex.toString();
+            var str = '';
+            for (var n = 0; n < hex.length; n += 2) {
+                str += String.fromCharCode(parseInt(hex.substr(n, 2), 16));
+            }
+            return str;
+        };
+        Utils.addHex = function (hex1, hex2) {
+            //I'm not sure exactly how javascript handles adding hex, but I'm assuming it wouldn't work well. So I convert them both to decimal, add them, and convert them back
+            var hexdec1 = this.toDecimal(hex1);
+            var hexdec2 = this.toDecimal(hex2);
+            var result = hexdec1 + hexdec2;
+            return this.toHex(result);
+        };
         return Utils;
     }());
     TSOS.Utils = Utils;

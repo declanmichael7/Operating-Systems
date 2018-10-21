@@ -377,9 +377,8 @@ var TSOS;
                     var ind = 0;
                     var indHex;
                     var opCode;
-                    while (i < program.length) {
+                    while (i <= program.length + 2) {
                         opCode = program.charAt(i - 1) + program.charAt(i);
-                        opCode.toUpperCase();
                         if (((i - 1) % 3) == 0) {
                             var indHex = TSOS.Utils.toHex(ind);
                             _Kernel.krnTrace(indHex);

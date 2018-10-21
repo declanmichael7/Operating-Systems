@@ -54,9 +54,11 @@ module TSOS {
                 this.PC = this.PC + 1;
                 document.getElementById('Acc').innerHTML = "" + this.Acc;
             }
+            //ADC
+
             //STA
             else if (_Memory[this.PC] == '8D') {
-                _Memory[Utils.toHex(_Memory[this.PC + 1])] = this.Acc;
+                _Memory[_Memory[this.PC + 1]] = this.Acc;
                 document.getElementById(Utils.toHex(_Memory[this.PC + 1])).innerHTML = "" + this.Acc;
                 this.PC = this.PC + 1;
             }
@@ -72,6 +74,7 @@ module TSOS {
                 this.Xreg = _Memory[Utils.toDecimal(_Memory[this.PC + 1])];
                 this.PC = this.PC + 1;
                 document.getElementById('Xreg').innerHTML = "" + this.Xreg;
+                _Kernel.krnTrace("Xreg = " + this.Xreg);
             }
             //LDY
             else if (_Memory[this.PC] == 'A0') {
@@ -85,6 +88,38 @@ module TSOS {
                 this.Yreg = _Memory[Utils.toDecimal(_Memory[this.PC + 1])];
                 this.PC = this.PC + 1;
                 document.getElementById('Yreg').innerHTML = "" + this.Yreg;
+                _Kernel.krnTrace('Yreg = ' + this.Yreg);
+            }
+            //NOP
+            else if (_Memory[this.PC] == 'EA') {
+                _Kernel.krnTrace("No Operation");
+            }
+            //BRK
+            else if (_Memory[this.PC] == '00') {
+                _Kernel.krnTrace("Break");
+                this.isExecuting = false;
+            }
+            //CPX
+
+            //BNE
+
+            //INC
+           /* else if (_Memory[this.PC] == 'EE') {
+                Utils.addHex(_Memory[this.PC + 1], 1);
+                document.getElementById(_Memory[this.PC + 1]).innerHTML = _Memory[_Memory[this.PC + 1]];
+            }*/
+            //SYS
+            else if (_Memory[this.PC] == 'FF') {
+                if (this.Xreg == 1) {
+                    _StdOut.putText(this.Yreg);
+                }
+                if (this.Xreg == 2) {
+                    i = Utils.toDecimal(this.Yreg);
+                    while (_Memory[i] != '00') {
+                        _StdOut.putText(Utils.hextoString(_Memory[i]));
+                        i++;
+                    }
+                }
             }
             this.PC++;
             document.getElementById('PC').innerHTML = "" + this.PC;
@@ -99,7 +134,6 @@ module TSOS {
                 document.getElementById('Xreg').innerHTML = "" + 0;
                 document.getElementById('Yreg').innerHTML = "" + 0;
                 document.getElementById('Zflag').innerHTML = "" + 0;
-
             }
         }
 

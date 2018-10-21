@@ -446,9 +446,8 @@ module TSOS {
                     var ind = 0;
                     var indHex: string;
                     var opCode: string;
-                    while (i < program.length) {
+                    while (i <= program.length + 2) {
                         opCode = program.charAt(i - 1) + program.charAt(i);
-                        opCode.toUpperCase();
                         if (((i - 1) % 3) == 0) {
                             var indHex = Utils.toHex(ind);
                             _Kernel.krnTrace(indHex);
