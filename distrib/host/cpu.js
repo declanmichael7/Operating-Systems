@@ -112,17 +112,35 @@ var TSOS;
             }
             //CPX
             else if (_Memory[this.PC] == 'EC') {
+                if (this.Xreg == _Memory[TSOS.Utils.toDecimal(_Memory[this.PC + 1])]) {
+                    this.Zflag = 1;
+                    document.getElementById('Zflag').innerHTML = "" + this.Zflag;
+                    console.log("Zflag = " + this.Zflag);
+                }
+                else {
+                    this.Zflag = 0;
+                    document.getElementById('Zflag').innerHTML = "" + this.Zflag;
+                    console.log("Zflag = " + this.Zflag);
+                }
                 this.PC = this.PC + 2;
+                document.getElementById('PC');
             }
             //BNE
             else if (_Memory[this.PC] == 'D0') {
-                this.PC = this.PC + 1;
+                if (this.Zflag == 0) {
+                    this.PC = TSOS.Utils.branch(this.PC, _Memory[this.PC + 1]);
+                    console.log('PC = ' + this.PC);
+                }
+                else {
+                    console.log('nope');
+                    this.PC = this.PC + 1;
+                }
             }
             //INC
             else if (_Memory[this.PC] == 'EE') {
                 //this looks really dumb, and I apologize for it
-                _Memory[TSOS.Utils.toDecimal(_Memory[TSOS.Utils.toDecimal(this.PC + 1)])] = TSOS.Utils.addHex(_Memory[TSOS.Utils.toDecimal(_Memory[TSOS.Utils.toDecimal(this.PC + 1)])], 1);
-                document.getElementById(_Memory[TSOS.Utils.toDecimal(this.PC + 1)]).innerHTML = "" + _Memory[TSOS.Utils.toDecimal(_Memory[TSOS.Utils.toDecimal(this.PC + 1)])];
+                _Memory[TSOS.Utils.toDecimal(_Memory[this.PC + 1])] = TSOS.Utils.addHex((_Memory[TSOS.Utils.toDecimal(_Memory[this.PC + 1])]), 1);
+                document.getElementById(_Memory[this.PC + 1]).innerHTML = _Memory[TSOS.Utils.toDecimal(_Memory[this.PC + 1])];
                 this.PC = this.PC + 2;
             }
             //SYS

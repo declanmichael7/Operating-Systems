@@ -76,6 +76,16 @@ var TSOS;
             }
             return this.toHex(result);
         };
+        Utils.branch = function (currentPC, branchAmount) {
+            currentPC = Utils.toHex(currentPC);
+            currentPC = parseInt(currentPC, 16);
+            branchAmount = parseInt(branchAmount, 16);
+            currentPC = currentPC + branchAmount;
+            if (currentPC > 255) {
+                currentPC = currentPC - 255;
+            }
+            return currentPC;
+        };
         return Utils;
     }());
     TSOS.Utils = Utils;
