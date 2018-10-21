@@ -55,7 +55,11 @@ module TSOS {
                 document.getElementById('Acc').innerHTML = "" + this.Acc;
             }
             //ADC
-
+            else if (_Memory[this.PC] == '6D') {
+                this.Acc = parseInt(Utils.addHex(_Memory[Utils.toDecimal(_Memory[(this.PC + 1)])], this.Acc), 16);
+                document.getElementById('Acc').innerHTML = "" + this.Acc;
+                this.PC = this.PC + 2;
+            }
             //STA
             else if (_Memory[this.PC] == '8D') {
                 _Memory[Utils.toDecimal(_Memory[this.PC + 1])] = this.Acc;
@@ -97,17 +101,27 @@ module TSOS {
             //BRK
             else if (_Memory[this.PC] == '00') {
                 _Kernel.krnTrace("Break");
-                //this.isExecuting = false;
+                this.isExecuting = false;
+                _CPU.init();
+                document.getElementById('PC').innerHTML = "" + 0;
+                document.getElementById('Acc').innerHTML = "" + 0;
+                document.getElementById('Xreg').innerHTML = "" + 0;
+                document.getElementById('Yreg').innerHTML = "" + 0;
+                document.getElementById('Zflag').innerHTML = "" + 0;
             }
             //CPX
-            
+            else if (_Memory[this.PC] == 'EC') {
+                this.PC = this.PC + 2;
+            }
             //BNE
-
+            else if (_Memory[this.PC] == 'D0') {
+                this.PC = this.PC + 1;
+            }
             //INC
-           else if (_Memory[this.PC] == 'EE') {
-                Utils.addHex(_Memory[Utils.toDecimal(this.PC + 1)], 1);
-                console.log(_Memory[Utils.toDecimal(this.PC + 1)]);
-                document.getElementById(_Memory[Utils.toDecimal(this.PC + 1)]).innerHTML = ""+ _Memory[_Memory[Utils.toDecimal(this.PC + 1)]];
+            else if (_Memory[this.PC] == 'EE') {
+                //this looks really dumb, and I apologize for it
+                _Memory[Utils.toDecimal(_Memory[Utils.toDecimal(this.PC +1)])] = Utils.addHex(_Memory[Utils.toDecimal(_Memory[Utils.toDecimal(this.PC + 1)])], 1);
+                document.getElementById(_Memory[Utils.toDecimal(this.PC + 1)]).innerHTML = ""+ _Memory[Utils.toDecimal(_Memory[Utils.toDecimal(this.PC + 1)])];
                 this.PC = this.PC + 2;
             }
             //SYS
@@ -123,7 +137,9 @@ module TSOS {
                     }
                 }
             }
-            this.PC++;
+            if (this.isExecuting == true) {
+                this.PC++;
+            }
             document.getElementById('PC').innerHTML = "" + this.PC;
             if (this.PC >= _Memory.lengthUsed) {
                 this.isExecuting = false;

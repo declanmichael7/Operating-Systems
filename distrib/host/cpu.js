@@ -56,6 +56,11 @@ var TSOS;
                 document.getElementById('Acc').innerHTML = "" + this.Acc;
             }
             //ADC
+            else if (_Memory[this.PC] == '6D') {
+                this.Acc = parseInt(TSOS.Utils.addHex(_Memory[TSOS.Utils.toDecimal(_Memory[(this.PC + 1)])], this.Acc), 16);
+                document.getElementById('Acc').innerHTML = "" + this.Acc;
+                this.PC = this.PC + 2;
+            }
             //STA
             else if (_Memory[this.PC] == '8D') {
                 _Memory[TSOS.Utils.toDecimal(_Memory[this.PC + 1])] = this.Acc;
@@ -97,15 +102,27 @@ var TSOS;
             //BRK
             else if (_Memory[this.PC] == '00') {
                 _Kernel.krnTrace("Break");
-                //this.isExecuting = false;
+                this.isExecuting = false;
+                _CPU.init();
+                document.getElementById('PC').innerHTML = "" + 0;
+                document.getElementById('Acc').innerHTML = "" + 0;
+                document.getElementById('Xreg').innerHTML = "" + 0;
+                document.getElementById('Yreg').innerHTML = "" + 0;
+                document.getElementById('Zflag').innerHTML = "" + 0;
             }
             //CPX
+            else if (_Memory[this.PC] == 'EC') {
+                this.PC = this.PC + 2;
+            }
             //BNE
+            else if (_Memory[this.PC] == 'D0') {
+                this.PC = this.PC + 1;
+            }
             //INC
             else if (_Memory[this.PC] == 'EE') {
-                TSOS.Utils.addHex(_Memory[TSOS.Utils.toDecimal(this.PC + 1)], 1);
-                console.log(_Memory[TSOS.Utils.toDecimal(this.PC + 1)]);
-                document.getElementById(_Memory[TSOS.Utils.toDecimal(this.PC + 1)]).innerHTML = "" + _Memory[_Memory[TSOS.Utils.toDecimal(this.PC + 1)]];
+                //this looks really dumb, and I apologize for it
+                _Memory[TSOS.Utils.toDecimal(_Memory[TSOS.Utils.toDecimal(this.PC + 1)])] = TSOS.Utils.addHex(_Memory[TSOS.Utils.toDecimal(_Memory[TSOS.Utils.toDecimal(this.PC + 1)])], 1);
+                document.getElementById(_Memory[TSOS.Utils.toDecimal(this.PC + 1)]).innerHTML = "" + _Memory[TSOS.Utils.toDecimal(_Memory[TSOS.Utils.toDecimal(this.PC + 1)])];
                 this.PC = this.PC + 2;
             }
             //SYS
@@ -121,7 +138,9 @@ var TSOS;
                     }
                 }
             }
-            this.PC++;
+            if (this.isExecuting == true) {
+                this.PC++;
+            }
             document.getElementById('PC').innerHTML = "" + this.PC;
             if (this.PC >= _Memory.lengthUsed) {
                 this.isExecuting = false;
