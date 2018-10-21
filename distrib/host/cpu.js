@@ -74,6 +74,19 @@ var TSOS;
                 this.PC = this.PC + 1;
                 document.getElementById('Xreg').innerHTML = "" + this.Xreg;
             }
+            //LDY
+            else if (_Memory[this.PC] == 'A0') {
+                this.Yreg = _Memory[this.PC + 1];
+                document.getElementById('Yreg').innerHTML = "" + this.Yreg;
+                this.PC = this.PC + 1;
+                _Kernel.krnTrace('Yreg = ' + this.Yreg);
+            }
+            //LDY
+            else if (_Memory[this.PC] == 'AC') {
+                this.Yreg = _Memory[TSOS.Utils.toDecimal(_Memory[this.PC + 1])];
+                this.PC = this.PC + 1;
+                document.getElementById('Yreg').innerHTML = "" + this.Yreg;
+            }
             this.PC++;
             document.getElementById('PC').innerHTML = "" + this.PC;
             if (this.PC > _Memory.lengthUsed) {
