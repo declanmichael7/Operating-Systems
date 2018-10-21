@@ -4,8 +4,8 @@ var TSOS;
     var MemoryAccessor = /** @class */ (function () {
         function MemoryAccessor() {
         }
-        MemoryAccessor.prototype.writeMem = function (char1, char2, position) {
-            _Memory[position] = char1 + char2;
+        MemoryAccessor.prototype.writeMem = function (opCode, position) {
+            _Memory[position] = opCode;
         };
         return MemoryAccessor;
     }());

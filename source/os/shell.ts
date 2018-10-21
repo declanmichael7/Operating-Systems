@@ -440,27 +440,31 @@ module TSOS {
                     i++;
                 }
                 if (validCommand) {
-                    /*if (_MemoryManager.partition0) {
-                        _MemoryManager.allocate();
-                    }*/
                     _Process1 = new Pcb("pid1", 0);
+                    _StdOut.putText("pid1");
                     i = 0;
                     var ind = 0;
-                    var char1: string;
-                    var char2: string;
+                    var indHex: string;
+                    var opCode: string;
                     while (i < program.length) {
-                        
-                        if (((i-1) % 3) == 0) {
-                            char1 = program.charAt(i - 1);
-                            char2 = program.charAt(i);
-                            _MemoryAccessor.writeMem(char1, char2, ind);
+                        opCode = program.charAt(i - 1) + program.charAt(i);
+                        opCode.toUpperCase();
+                        if (((i - 1) % 3) == 0) {
+                            var indHex = Utils.toHex(ind);
+                            _Kernel.krnTrace(indHex);
+                            _MemoryAccessor.writeMem(opCode, ind);
+                            document.getElementById(indHex).innerHTML = opCode;
                             ind++;
                         }
                         i++
                     }
                     _Memory.lengthUsed = ind - 1;
+                    for (i = _Memory.lengthUsed; i < 256; i++) {
+                        _MemoryAccessor.writeMem('00', i);
+                        indHex = Utils.toHex(i);
+                        document.getElementById(indHex).innerHTML = '00';
+                    }
                     i = 0;
-                    _StdOut.putText(_Process1.pid);
                 }
             }
         }

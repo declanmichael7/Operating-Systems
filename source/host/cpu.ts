@@ -38,11 +38,23 @@ module TSOS {
         }
 
         public cycle(): void {
-            _Kernel.krnTrace('CPU cycle');
             // TODO: Accumulate CPU usage and profiling statistics here.
             // Do the real work here. Be sure to set this.isExecuting appropriately.
             _Kernel.krnTrace(_Memory[this.PC]);
+            if (_Memory[this.PC] == 'A9') {
+                this.Acc = _Memory[this.PC + 1];
+                document.getElementById('Acc').innerHTML = ""+this.Acc;
+                //For now this is just +1. Change later
+                this.PC = this.PC + 1;
+                _Kernel.krnTrace('Acc = ' + this.Acc);
+            }
+            else if (_Memory[this.PC] == 'AD') {
+                this.Acc = _Memory[_Memory[this.PC + 1]];
+                this.PC = this.PC + 1;
+                _Kernel.krnTrace('Acc = ' + this.Acc);
+            }
             this.PC++;
+            document.getElementById('PC').innerHTML = "" + this.PC;
             if (this.PC > _Memory.lengthUsed) {
                 this.isExecuting = false;
             }

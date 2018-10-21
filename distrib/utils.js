@@ -44,6 +44,12 @@ var TSOS;
             }
             return retVal;
         };
+        Utils.toHex = function (decimal) {
+            return Math.abs(decimal).toString(16);
+        };
+        Utils.toDecimal = function (hex) {
+            return parseInt(hex, 16);
+        };
         return Utils;
     }());
     TSOS.Utils = Utils;
