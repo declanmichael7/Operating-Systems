@@ -64,7 +64,7 @@ var TSOS;
             //STA
             else if (_Memory[this.PC] == '8D') {
                 _Memory[TSOS.Utils.toDecimal(_Memory[this.PC + 1])] = this.Acc;
-                document.getElementById(_Memory[TSOS.Utils.toDecimal(this.PC + 1)]).innerHTML = "" + this.Acc;
+                document.getElementById(_Memory[this.PC + 1].toLowerCase()).innerHTML = "" + this.Acc;
                 this.PC = this.PC + 2;
             }
             //LDX
@@ -115,15 +115,12 @@ var TSOS;
                 if (this.Xreg == _Memory[TSOS.Utils.toDecimal(_Memory[this.PC + 1])]) {
                     this.Zflag = 1;
                     document.getElementById('Zflag').innerHTML = "" + this.Zflag;
-                    console.log("Zflag = " + this.Zflag);
                 }
                 else {
                     this.Zflag = 0;
                     document.getElementById('Zflag').innerHTML = "" + this.Zflag;
-                    console.log("Zflag = " + this.Zflag);
                 }
                 this.PC = this.PC + 2;
-                document.getElementById('PC');
             }
             //BNE
             else if (_Memory[this.PC] == 'D0') {
@@ -132,7 +129,6 @@ var TSOS;
                     console.log('PC = ' + this.PC);
                 }
                 else {
-                    console.log('nope');
                     this.PC = this.PC + 1;
                 }
             }
@@ -140,7 +136,7 @@ var TSOS;
             else if (_Memory[this.PC] == 'EE') {
                 //this looks really dumb, and I apologize for it
                 _Memory[TSOS.Utils.toDecimal(_Memory[this.PC + 1])] = TSOS.Utils.addHex((_Memory[TSOS.Utils.toDecimal(_Memory[this.PC + 1])]), 1);
-                document.getElementById(_Memory[this.PC + 1]).innerHTML = _Memory[TSOS.Utils.toDecimal(_Memory[this.PC + 1])];
+                document.getElementById(_Memory[this.PC + 1].toLowerCase()).innerHTML = _Memory[TSOS.Utils.toDecimal(_Memory[this.PC + 1])];
                 this.PC = this.PC + 2;
             }
             //SYS

@@ -61,18 +61,13 @@ module TSOS {
         public static addHex(hex1, hex2) {
             //I'm not sure exactly how javascript handles adding hex, but I'm assuming it wouldn't work well. So I convert them both to decimal, add them, and convert them back
             var hexdec1 = this.toDecimal(hex1);
-            console.log(hexdec1);
             var hexdec2 = this.toDecimal(hex2);
-            console.log(hexdec2);
             var result = hexdec1 + hexdec2;
             if (result > 255) {
                 result = result - 256;
             }
-            console.log(result);
-            console.log(this.toHex(result));
             if (result <= 15) {
                 return "0" + this.toHex(result);
-                console.log('test');
             }
             return this.toHex(result);
         }

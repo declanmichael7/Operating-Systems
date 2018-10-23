@@ -63,8 +63,9 @@ module TSOS {
             //STA
             else if (_Memory[this.PC] == '8D') {
                 _Memory[Utils.toDecimal(_Memory[this.PC + 1])] = this.Acc;
-                document.getElementById(_Memory[Utils.toDecimal(this.PC + 1)]).innerHTML = "" + this.Acc;
+                document.getElementById(_Memory[this.PC + 1].toLowerCase()).innerHTML = "" + this.Acc;
                 this.PC = this.PC + 2;
+
             }
             //LDX
             else if (_Memory[this.PC] == 'A2') {
@@ -135,7 +136,7 @@ module TSOS {
             else if (_Memory[this.PC] == 'EE') {
                 //this looks really dumb, and I apologize for it
                 _Memory[Utils.toDecimal(_Memory[this.PC + 1])] = Utils.addHex((_Memory[Utils.toDecimal(_Memory[this.PC + 1])]), 1);
-                document.getElementById(_Memory[this.PC + 1]).innerHTML = _Memory[Utils.toDecimal(_Memory[this.PC + 1])];
+                document.getElementById(_Memory[this.PC + 1].toLowerCase()).innerHTML = _Memory[Utils.toDecimal(_Memory[this.PC + 1])];
                 this.PC = this.PC + 2;
             }
             //SYS
