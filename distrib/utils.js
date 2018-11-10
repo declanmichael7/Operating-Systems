@@ -63,24 +63,26 @@ var TSOS;
             }
             return str;
         };
-        Utils.addHex = function (hex1, hex2) {
-            //I'm not sure exactly how javascript handles adding hex, but I'm assuming it wouldn't work well. So I convert them both to decimal, add them, and convert them back
-            var hexdec1 = hex1;
-            var hexdec2 = hex2;
-            var result = hexdec1 + hexdec2;
+        Utils.addHex = function (num1, num2) {
+            num1 = parseInt(num1, 16);
+            num2 = parseInt(num2, 16);
+            var result = num1 + num2;
             if (result > 255) {
                 result = result - 256;
             }
             if (result <= 15) {
+                console.log(result);
                 return "0" + this.toHex(result);
             }
-            return this.toHex(result);
+            else {
+                return this.toHex(result);
+            }
         };
         Utils.branch = function (currentPC, branchAmount) {
             branchAmount = parseInt(branchAmount, 16);
             currentPC = currentPC + branchAmount;
-            if (currentPC > 255) {
-                currentPC = currentPC - 255;
+            if (currentPC >= 255) {
+                currentPC = currentPC - 256;
             }
             return currentPC;
         };

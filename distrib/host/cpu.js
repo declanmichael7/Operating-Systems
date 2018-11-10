@@ -18,10 +18,10 @@ var TSOS;
     var Cpu = /** @class */ (function () {
         function Cpu(PC, Acc, Xreg, Yreg, Zflag, currentPartition, isExecuting) {
             if (PC === void 0) { PC = 0; }
-            if (Acc === void 0) { Acc = 0; }
-            if (Xreg === void 0) { Xreg = 0; }
-            if (Yreg === void 0) { Yreg = 0; }
-            if (Zflag === void 0) { Zflag = 0; }
+            if (Acc === void 0) { Acc = '0'; }
+            if (Xreg === void 0) { Xreg = '0'; }
+            if (Yreg === void 0) { Yreg = '0'; }
+            if (Zflag === void 0) { Zflag = '0'; }
             if (currentPartition === void 0) { currentPartition = 0; }
             if (isExecuting === void 0) { isExecuting = false; }
             this.PC = PC;
@@ -34,10 +34,10 @@ var TSOS;
         }
         Cpu.prototype.init = function () {
             this.PC = 0;
-            this.Acc = 0;
-            this.Xreg = 0;
-            this.Yreg = 0;
-            this.Zflag = 0;
+            this.Acc = '0';
+            this.Xreg = '0';
+            this.Yreg = '0';
+            this.Zflag = '0';
             this.currentPartition = 0;
             this.isExecuting = false;
         };
@@ -54,20 +54,21 @@ var TSOS;
             }
             //LDA
             else if (_MemoryAccessor.readMem(this.PC, this.currentPartition) == 'AD') {
-                this.Acc = _Memory[TSOS.Utils.toDecimal(_MemoryAccessor.readMem((this.PC + 1), this.currentPartition))];
+                this.Acc = _MemoryAccessor.readMem(TSOS.Utils.toDecimal(_MemoryAccessor.readMem((this.PC + 1), this.currentPartition)), this.currentPartition);
                 this.PC = this.PC + 2;
                 document.getElementById('Acc').innerHTML = "" + this.Acc;
+                console.log(this.Acc);
+                _Kernel.krnTrace('Acc = ' + this.Acc);
             }
             //ADC
             else if (_MemoryAccessor.readMem(this.PC, this.currentPartition) == '6D') {
                 console.log(TSOS.Utils.addHex(_Memory[TSOS.Utils.toDecimal(_Memory[(this.PC + 1)])], this.Acc));
-                this.Acc = parseInt(TSOS.Utils.addHex(_Memory[TSOS.Utils.toDecimal(_Memory[(this.PC + 1)])], this.Acc), 16);
+                this.Acc = TSOS.Utils.addHex(_Memory[TSOS.Utils.toDecimal(_Memory[(this.PC + 1)])], this.Acc), 16;
                 document.getElementById('Acc').innerHTML = "" + TSOS.Utils.toHex(this.Acc);
                 this.PC = this.PC + 2;
             }
             //STA
             else if (_MemoryAccessor.readMem(this.PC, this.currentPartition) == '8D') {
-                console.log(TSOS.Utils.toDecimal(_MemoryAccessor.readMem(this.PC + 1, this.currentPartition)));
                 _MemoryAccessor.writeMem(TSOS.Utils.toDecimal(_MemoryAccessor.readMem(this.PC + 1, this.currentPartition)), this.currentPartition, this.Acc);
                 this.PC = this.PC + 2;
             }
@@ -80,7 +81,7 @@ var TSOS;
             }
             //LDX
             else if (_MemoryAccessor.readMem(this.PC, this.currentPartition) == 'AE') {
-                this.Xreg = _Memory[TSOS.Utils.toDecimal(_MemoryAccessor.readMem((this.PC + 1), this.currentPartition))];
+                this.Xreg = _MemoryAccessor.readMem(TSOS.Utils.toDecimal(_MemoryAccessor.readMem((this.PC + 1), this.currentPartition)), this.currentPartition);
                 this.PC = this.PC + 2;
                 document.getElementById('Xreg').innerHTML = "" + this.Xreg;
                 _Kernel.krnTrace("Xreg = " + this.Xreg);
@@ -94,7 +95,7 @@ var TSOS;
             }
             //LDY
             else if (_MemoryAccessor.readMem(this.PC, this.currentPartition) == 'AC') {
-                this.Yreg = _Memory[TSOS.Utils.toDecimal(_MemoryAccessor.readMem((this.PC + 1), this.currentPartition))];
+                this.Yreg = _MemoryAccessor.readMem(TSOS.Utils.toDecimal(_MemoryAccessor.readMem((this.PC + 1), this.currentPartition)), this.currentPartition);
                 this.PC = this.PC + 2;
                 document.getElementById('Yreg').innerHTML = "" + this.Yreg;
                 _Kernel.krnTrace('Yreg = ' + this.Yreg);
@@ -103,7 +104,7 @@ var TSOS;
             else if (_MemoryAccessor.readMem(this.PC, this.currentPartition) == 'EA') {
                 _Kernel.krnTrace("No Operation");
             }
-            //BRK
+            //BRK Figure out where to put the gui updates
             else if (_MemoryAccessor.readMem(this.PC, this.currentPartition) == '00') {
                 _Kernel.krnTrace("Break");
                 this.isExecuting = false;
@@ -114,21 +115,21 @@ var TSOS;
                 document.getElementById('Yreg').innerHTML = "" + 0;
                 document.getElementById('Zflag').innerHTML = "" + 0;
             }
-            //CPX
+            //CPX NOT DONE
             else if (_MemoryAccessor.readMem(this.PC, this.currentPartition) == 'EC') {
-                if (this.Xreg == _Memory[TSOS.Utils.toDecimal(_MemoryAccessor.readMem((this.PC + 1), this.currentPartition))]) {
-                    this.Zflag = 1;
+                if (this.Xreg == _MemoryAccessor.readMem(TSOS.Utils.toDecimal(_MemoryAccessor.readMem((this.PC + 1), this.currentPartition)), this.currentPartition)) {
+                    this.Zflag = '1';
                     document.getElementById('Zflag').innerHTML = "" + this.Zflag;
                 }
                 else {
-                    this.Zflag = 0;
+                    this.Zflag = '0';
                     document.getElementById('Zflag').innerHTML = "" + this.Zflag;
                 }
                 this.PC = this.PC + 2;
             }
-            //BNE
+            //BNE NOT DONE
             else if (_MemoryAccessor.readMem(this.PC, this.currentPartition) == 'D0') {
-                if (this.Zflag == 0) {
+                if (this.Zflag == '0') {
                     this.PC = TSOS.Utils.branch(this.PC, _MemoryAccessor.readMem((this.PC + 1), this.currentPartition));
                     console.log('PC = ' + this.PC);
                 }
@@ -136,18 +137,20 @@ var TSOS;
                     this.PC = this.PC + 1;
                 }
             }
-            //INC
+            //INC NOT DONE
             else if (_MemoryAccessor.readMem(this.PC, this.currentPartition) == 'EE') {
                 //this looks really dumb, and I apologize for it
-                _MemoryAccessor.writeMem(TSOS.Utils.toDecimal(_MemoryAccessor.readMem(this.PC + 1, this.currentPartition)), this.currentPartition, TSOS.Utils.addHex(_MemoryAccessor.readMem(this.PC + 1, this.currentPartition), 1));
+                console.log(TSOS.Utils.addHex(_MemoryAccessor.readMem(this.PC + 1, this.currentPartition), 1));
+                _MemoryAccessor.writeMem(TSOS.Utils.toDecimal(_MemoryAccessor.readMem(this.PC + 1, this.currentPartition)), this.currentPartition, TSOS.Utils.addHex(_MemoryAccessor.readMem(TSOS.Utils.toDecimal(_MemoryAccessor.readMem(this.PC + 1, this.currentPartition)), this.currentPartition), 1));
                 this.PC = this.PC + 2;
             }
             //SYS
             else if (_MemoryAccessor.readMem(this.PC, this.currentPartition) == 'FF') {
-                if (this.Xreg == 1) {
+                if (this.Xreg == '01') {
+                    console.log("Output: " + this.Yreg);
                     _StdOut.putText(this.Yreg);
                 }
-                if (this.Xreg == 2) {
+                if (this.Xreg == '02') {
                     i = TSOS.Utils.toDecimal(this.Yreg);
                     while (_MemoryAccessor.readMem(i, this.currentPartition) != '00') {
                         _StdOut.putText(TSOS.Utils.hextoString(_MemoryAccessor.readMem(i, this.currentPartition)));
@@ -159,7 +162,7 @@ var TSOS;
                 this.PC++;
             }
             document.getElementById('PC').innerHTML = "" + this.PC;
-            if (this.PC >= _Memory.lengthUsed) {
+            /*if (this.PC >= _Memory.lengthUsed) {
                 this.isExecuting = false;
                 _Process1.state = 'Complete';
                 //Reset the values of everything
@@ -170,7 +173,7 @@ var TSOS;
                 document.getElementById('Xreg').innerHTML = "" + 0;
                 document.getElementById('Yreg').innerHTML = "" + 0;
                 document.getElementById('Zflag').innerHTML = "" + 0;
-            }
+            }*/
         };
         Cpu.prototype.runProgram = function (pid) {
             if (pid == 0) {
