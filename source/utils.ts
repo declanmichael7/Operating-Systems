@@ -44,7 +44,12 @@ module TSOS {
             return retVal;
         }
         public static toHex(decimal) {
+            //if (decimal <= 15) {
+            //    return '0' + Math.abs(decimal).toString(16);
+            //}
+            //else {
                 return Math.abs(decimal).toString(16);
+            //}
         }
 
         public static toDecimal(hex) {
@@ -60,8 +65,8 @@ module TSOS {
         }
         public static addHex(hex1, hex2) {
             //I'm not sure exactly how javascript handles adding hex, but I'm assuming it wouldn't work well. So I convert them both to decimal, add them, and convert them back
-            var hexdec1 = this.toDecimal(hex1);
-            var hexdec2 = this.toDecimal(hex2);
+            var hexdec1 = hex1;
+            var hexdec2 = hex2;
             var result = hexdec1 + hexdec2;
             if (result > 255) {
                 result = result - 256;
@@ -72,8 +77,6 @@ module TSOS {
             return this.toHex(result);
         }
         public static branch(currentPC, branchAmount) {
-            currentPC = Utils.toHex(currentPC);
-            currentPC = parseInt(currentPC, 16);
             branchAmount = parseInt(branchAmount, 16);
             currentPC = currentPC + branchAmount;
             if (currentPC > 255) {

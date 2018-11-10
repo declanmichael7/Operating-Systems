@@ -24,6 +24,7 @@ module TSOS {
                     public Xreg: number = 0,
                     public Yreg: number = 0,
                     public Zflag: number = 0,
+                    public currentPartition = 0,
                     public isExecuting: boolean = false) {
 
         }
@@ -34,73 +35,76 @@ module TSOS {
             this.Xreg = 0;
             this.Yreg = 0;
             this.Zflag = 0;
+            this.currentPartition = 0;
             this.isExecuting = false;
         }
 
         public cycle(): void {
             // TODO: Accumulate CPU usage and profiling statistics here.
             // Do the real work here. Be sure to set this.isExecuting appropriately.
-            _Kernel.krnTrace(_Memory[this.PC]);
+            _Kernel.krnTrace(this.PC + " " + _MemoryAccessor.readMem(this.PC, this.currentPartition));
             //LDA
-            if (_Memory[this.PC] == 'A9') {
-                this.Acc = _Memory[this.PC + 1];
+            if (_MemoryAccessor.readMem(this.PC, this.currentPartition) == 'A9') {
+                this.Acc = _MemoryAccessor.readMem((this.PC + 1), this.currentPartition);
                 document.getElementById('Acc').innerHTML = "" + this.Acc;
                 this.PC = this.PC + 1;
                 _Kernel.krnTrace('Acc = ' + this.Acc);
             }
             //LDA
-            else if (_Memory[this.PC] == 'AD') {
-                this.Acc = _Memory[Utils.toDecimal(_Memory[this.PC + 1])];
+            else if (_MemoryAccessor.readMem(this.PC, this.currentPartition) == 'AD') {
+                this.Acc = _Memory[Utils.toDecimal(_MemoryAccessor.readMem((this.PC + 1), this.currentPartition))];
                 this.PC = this.PC + 2;
                 document.getElementById('Acc').innerHTML = "" + this.Acc;
             }
             //ADC
-            else if (_Memory[this.PC] == '6D') {
+            else if (_MemoryAccessor.readMem(this.PC, this.currentPartition) == '6D') {
+                console.log(Utils.addHex(_Memory[Utils.toDecimal(_Memory[(this.PC + 1)])], this.Acc));
                 this.Acc = parseInt(Utils.addHex(_Memory[Utils.toDecimal(_Memory[(this.PC + 1)])], this.Acc), 16);
-                document.getElementById('Acc').innerHTML = "" + this.Acc;
+                document.getElementById('Acc').innerHTML = "" + Utils.toHex(this.Acc);
                 this.PC = this.PC + 2;
             }
             //STA
-            else if (_Memory[this.PC] == '8D') {
-                _Memory[Utils.toDecimal(_Memory[this.PC + 1])] = this.Acc;
-                document.getElementById(_Memory[this.PC + 1].toLowerCase()).innerHTML = "" + this.Acc;
+            else if (_MemoryAccessor.readMem(this.PC, this.currentPartition) == '8D') {
+                console.log(Utils.toDecimal(_MemoryAccessor.readMem(this.PC + 1, this.currentPartition)));
+                _MemoryAccessor.writeMem(Utils.toDecimal(_MemoryAccessor.readMem(this.PC + 1, this.currentPartition)),
+                                         this.currentPartition,
+                                         this.Acc);
                 this.PC = this.PC + 2;
-
             }
             //LDX
-            else if (_Memory[this.PC] == 'A2') {
-                this.Xreg = _Memory[this.PC + 1];
+            else if (_MemoryAccessor.readMem(this.PC, this.currentPartition) == 'A2') {
+                this.Xreg = _MemoryAccessor.readMem((this.PC + 1), this.currentPartition);
                 document.getElementById('Xreg').innerHTML = "" + this.Xreg;
                 this.PC = this.PC + 1;
                 _Kernel.krnTrace('Xreg = ' + this.Xreg);
             }
             //LDX
-            else if (_Memory[this.PC] == 'AE') {
-                this.Xreg = _Memory[Utils.toDecimal(_Memory[this.PC + 1])];
+            else if (_MemoryAccessor.readMem(this.PC, this.currentPartition) == 'AE') {
+                this.Xreg = _Memory[Utils.toDecimal(_MemoryAccessor.readMem((this.PC + 1), this.currentPartition))];
                 this.PC = this.PC + 2;
                 document.getElementById('Xreg').innerHTML = "" + this.Xreg;
                 _Kernel.krnTrace("Xreg = " + this.Xreg);
             }
             //LDY
-            else if (_Memory[this.PC] == 'A0') {
-                this.Yreg = _Memory[this.PC + 1];
+            else if (_MemoryAccessor.readMem(this.PC, this.currentPartition) == 'A0') {
+                this.Yreg = _MemoryAccessor.readMem((this.PC + 1), this.currentPartition);
                 document.getElementById('Yreg').innerHTML = "" + this.Yreg;
                 this.PC = this.PC + 1;
                 _Kernel.krnTrace('Yreg = ' + this.Yreg);
             }
             //LDY
-            else if (_Memory[this.PC] == 'AC') {
-                this.Yreg = _Memory[Utils.toDecimal(_Memory[this.PC + 1])];
+            else if (_MemoryAccessor.readMem(this.PC, this.currentPartition) == 'AC') {
+                this.Yreg = _Memory[Utils.toDecimal(_MemoryAccessor.readMem((this.PC + 1), this.currentPartition))];
                 this.PC = this.PC + 2;
                 document.getElementById('Yreg').innerHTML = "" + this.Yreg;
                 _Kernel.krnTrace('Yreg = ' + this.Yreg);
             }
             //NOP
-            else if (_Memory[this.PC] == 'EA') {
+            else if (_MemoryAccessor.readMem(this.PC, this.currentPartition) == 'EA') {
                 _Kernel.krnTrace("No Operation");
             }
             //BRK
-            else if (_Memory[this.PC] == '00') {
+            else if (_MemoryAccessor.readMem(this.PC, this.currentPartition) == '00') {
                 _Kernel.krnTrace("Break");
                 this.isExecuting = false;
                 _CPU.init();
@@ -111,8 +115,8 @@ module TSOS {
                 document.getElementById('Zflag').innerHTML = "" + 0;
             }
             //CPX
-            else if (_Memory[this.PC] == 'EC') {
-                if (this.Xreg == _Memory[Utils.toDecimal(_Memory[this.PC + 1])]) {
+            else if (_MemoryAccessor.readMem(this.PC, this.currentPartition) == 'EC') {
+                if (this.Xreg == _Memory[Utils.toDecimal(_MemoryAccessor.readMem((this.PC + 1), this.currentPartition))]) {
                     this.Zflag = 1;
                     document.getElementById('Zflag').innerHTML = "" + this.Zflag;
                 }
@@ -123,9 +127,9 @@ module TSOS {
                 this.PC = this.PC + 2;
             }
             //BNE
-            else if (_Memory[this.PC] == 'D0') {
+            else if (_MemoryAccessor.readMem(this.PC, this.currentPartition) == 'D0') {
                 if (this.Zflag == 0) {
-                    this.PC = Utils.branch(this.PC, _Memory[this.PC + 1]);
+                    this.PC = Utils.branch(this.PC, _MemoryAccessor.readMem((this.PC + 1), this.currentPartition));
                     console.log('PC = ' + this.PC);
                 }
                 else {
@@ -133,21 +137,22 @@ module TSOS {
                 }
             }
             //INC
-            else if (_Memory[this.PC] == 'EE') {
+            else if (_MemoryAccessor.readMem(this.PC, this.currentPartition) == 'EE') {
                 //this looks really dumb, and I apologize for it
-                _Memory[Utils.toDecimal(_Memory[this.PC + 1])] = Utils.addHex((_Memory[Utils.toDecimal(_Memory[this.PC + 1])]), 1);
-                document.getElementById(_Memory[this.PC + 1].toLowerCase()).innerHTML = _Memory[Utils.toDecimal(_Memory[this.PC + 1])];
+                _MemoryAccessor.writeMem(Utils.toDecimal(_MemoryAccessor.readMem(this.PC +1, this.currentPartition)),
+                                         this.currentPartition, 
+                                         Utils.addHex(_MemoryAccessor.readMem(this.PC +1, this.currentPartition), 1));
                 this.PC = this.PC + 2;
             }
             //SYS
-            else if (_Memory[this.PC] == 'FF') {
+            else if (_MemoryAccessor.readMem(this.PC, this.currentPartition) == 'FF') {
                 if (this.Xreg == 1) {
                     _StdOut.putText(this.Yreg);
                 }
                 if (this.Xreg == 2) {
                     i = Utils.toDecimal(this.Yreg);
-                    while (_Memory[i] != '00') {
-                        _StdOut.putText(Utils.hextoString(_Memory[i]));
+                    while (_MemoryAccessor.readMem(i, this.currentPartition) != '00') {
+                        _StdOut.putText(Utils.hextoString(_MemoryAccessor.readMem(i, this.currentPartition)));
                         i++;
                     }
                 }

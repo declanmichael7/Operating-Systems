@@ -64,7 +64,7 @@
     "source/host/devices.ts",
     "source/host/memory.ts",
     "source/host/memoryAccessor.ts",
-	"source/host/pcb.ts",
+	"source/os/pcb.ts",
     "source/os/canvastext.ts",
     "source/os/console.ts",
     "source/os/deviceDriver.ts",

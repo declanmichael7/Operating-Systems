@@ -455,9 +455,7 @@ module TSOS {
                             else {
                                 var indHex = Utils.toHex(ind);
                             }
-                            _Kernel.krnTrace(indHex);
-                            _MemoryAccessor.writeMem(opCode, ind);
-                            document.getElementById(indHex).innerHTML = opCode;
+                            _MemoryAccessor.writeMem(ind, _CPU.currentPartition, opCode);
                             ind++;
                         }
                         i++
@@ -465,14 +463,7 @@ module TSOS {
                     _Memory.lengthUsed = ind;
                     _Kernel.krnTrace("Length = " + _Memory.lengthUsed);
                     for (i = _Memory.lengthUsed; i < 256; i++) {
-                        _MemoryAccessor.writeMem('00', i);
-                        if (i <= 15) {
-                            indHex = '0' + Utils.toHex(i);
-                        }
-                        else {
-                            indHex = Utils.toHex(i);
-                        }
-                        document.getElementById(indHex).innerHTML = '00';
+                        _MemoryAccessor.writeMem(i, _CPU.currentPartition, '00');
                     }
                     i = 0;
                 }

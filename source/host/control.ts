@@ -127,5 +127,16 @@ module TSOS {
             // be reloaded from the server. If it is false or not specified the browser may reload the
             // page from its cache, which is not what we want.
         }
+
+        public static updateMemory(position, partition) {
+            if (position <= 15) {
+                var hexIndex = '0' + Utils.toHex(position);
+            }
+            else {
+                var hexIndex = Utils.toHex(position)
+            }
+            console.log()
+            document.getElementById(hexIndex).innerHTML = _MemoryAccessor.readMem(position, partition);
+        }
     }
 }

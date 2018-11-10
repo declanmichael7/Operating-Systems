@@ -13,7 +13,6 @@ module TSOS {
                 _Memory[i] = '00';
                 i++
             }
-            document.getElementById("taProgramInput").innerHTML = _Memory[255];
         }
     }
 }
