@@ -104,7 +104,7 @@ var TSOS;
             else if (_MemoryAccessor.readMem(this.PC, this.currentPartition) == 'EA') {
                 _Kernel.krnTrace("No Operation");
             }
-            //BRK Figure out where to put the gui updates
+            //BRK
             else if (_MemoryAccessor.readMem(this.PC, this.currentPartition) == '00') {
                 _Kernel.krnTrace("Break");
                 this.isExecuting = false;
@@ -137,9 +137,8 @@ var TSOS;
                     this.PC = this.PC + 1;
                 }
             }
-            //INC NOT DONE
+            //INC
             else if (_MemoryAccessor.readMem(this.PC, this.currentPartition) == 'EE') {
-                //this looks really dumb, and I apologize for it
                 console.log(TSOS.Utils.addHex(_MemoryAccessor.readMem(this.PC + 1, this.currentPartition), 1));
                 _MemoryAccessor.writeMem(TSOS.Utils.toDecimal(_MemoryAccessor.readMem(this.PC + 1, this.currentPartition)), this.currentPartition, TSOS.Utils.addHex(_MemoryAccessor.readMem(TSOS.Utils.toDecimal(_MemoryAccessor.readMem(this.PC + 1, this.currentPartition)), this.currentPartition), 1));
                 this.PC = this.PC + 2;

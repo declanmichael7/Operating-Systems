@@ -104,7 +104,7 @@ module TSOS {
             else if (_MemoryAccessor.readMem(this.PC, this.currentPartition) == 'EA') {
                 _Kernel.krnTrace("No Operation");
             }
-            //BRK Figure out where to put the gui updates
+            //BRK
             else if (_MemoryAccessor.readMem(this.PC, this.currentPartition) == '00') {
                 _Kernel.krnTrace("Break");
                 this.isExecuting = false;
@@ -115,7 +115,7 @@ module TSOS {
                 document.getElementById('Yreg').innerHTML = "" + 0;
                 document.getElementById('Zflag').innerHTML = "" + 0;
             }
-            //CPX NOT DONE
+            //CPX
             else if (_MemoryAccessor.readMem(this.PC, this.currentPartition) == 'EC') {
                 if (this.Xreg == _MemoryAccessor.readMem(Utils.toDecimal(_MemoryAccessor.readMem((this.PC + 1), this.currentPartition)), this.currentPartition)) {
                     this.Zflag = '1';
@@ -127,7 +127,7 @@ module TSOS {
                 }
                 this.PC = this.PC + 2;
             }
-            //BNE NOT DONE
+            //BNE
             else if (_MemoryAccessor.readMem(this.PC, this.currentPartition) == 'D0') {
                 if (this.Zflag == '0') {
                     this.PC = Utils.branch(this.PC, _MemoryAccessor.readMem((this.PC + 1), this.currentPartition));
@@ -137,9 +137,8 @@ module TSOS {
                     this.PC = this.PC + 1;
                 }
             }
-            //INC NOT DONE
+            //INC
             else if (_MemoryAccessor.readMem(this.PC, this.currentPartition) == 'EE') {
-                //this looks really dumb, and I apologize for it
                 console.log(Utils.addHex(_MemoryAccessor.readMem(this.PC + 1, this.currentPartition), 1));
                 _MemoryAccessor.writeMem(Utils.toDecimal(_MemoryAccessor.readMem(this.PC +1, this.currentPartition)),
                                          this.currentPartition, 

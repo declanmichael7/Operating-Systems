@@ -82,7 +82,7 @@ var TSOS;
             branchAmount = parseInt(branchAmount, 16);
             currentPC = currentPC + branchAmount;
             if (currentPC >= 255) {
-                currentPC = currentPC - 256;
+                currentPC = currentPC - 255;
             }
             return currentPC;
         };
