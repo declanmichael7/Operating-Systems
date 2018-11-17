@@ -440,8 +440,9 @@ module TSOS {
                     i++;
                 }
                 if (validCommand) {
-                    _Process1 = new Pcb("0", 0);
-                    _StdOut.putText("pid:" +_Process1.pid);
+                    _Processes.push(new Pcb(processNum, _MemoryManager.assignMem()));
+                    _StdOut.putText("process " + processNum);
+                    processNum++;
                     i = 0;
                     var ind = 0;
                     var indHex: string;

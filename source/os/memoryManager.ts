@@ -15,5 +15,8 @@ module TSOS {
                 this.partition0 = true;
             }
         }
+        public assignMem() {
+
+        }
     }
 }

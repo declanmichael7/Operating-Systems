@@ -115,7 +115,7 @@ var TSOS;
                 document.getElementById('Yreg').innerHTML = "" + 0;
                 document.getElementById('Zflag').innerHTML = "" + 0;
             }
-            //CPX NOT DONE
+            //CPX
             else if (_MemoryAccessor.readMem(this.PC, this.currentPartition) == 'EC') {
                 if (this.Xreg == _MemoryAccessor.readMem(TSOS.Utils.toDecimal(_MemoryAccessor.readMem((this.PC + 1), this.currentPartition)), this.currentPartition)) {
                     this.Zflag = '1';
@@ -127,7 +127,7 @@ var TSOS;
                 }
                 this.PC = this.PC + 2;
             }
-            //BNE NOT DONE
+            //BNE
             else if (_MemoryAccessor.readMem(this.PC, this.currentPartition) == 'D0') {
                 if (this.Zflag == '0') {
                     this.PC = TSOS.Utils.branch(this.PC, _MemoryAccessor.readMem((this.PC + 1), this.currentPartition));
@@ -175,10 +175,8 @@ var TSOS;
             }*/
         };
         Cpu.prototype.runProgram = function (pid) {
-            if (pid == 0) {
-                _Process1.state = "Running";
-                _CPU.isExecuting = true;
-            }
+            _Processes[pid].state = "Running";
+            _CPU.isExecuting = true;
         };
         return Cpu;
     }());

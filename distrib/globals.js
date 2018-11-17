@@ -23,7 +23,7 @@ var KEYBOARD_IRQ = 1;
 var _CPU; // Utilize TypeScript's type annotation system to ensure that _CPU is an instance of the Cpu class.
 var _Memory;
 var _MemoryAccessor;
-var _Process1;
+var _Processes = [];
 var _MemoryManager = null;
 var _OSclock = 0; // Page 23.
 var _Mode = 0; // (currently unused)  0 = Kernel Mode, 1 = User Mode.  See page 21.
@@ -62,6 +62,7 @@ var StatusText = "Saving the Mushroom Kingdom";
 // A temporary string to help with command completion
 var tempStr;
 var i = 0;
+var processNum = 0;
 var program;
 var noSpaces;
 var opCodes = [];

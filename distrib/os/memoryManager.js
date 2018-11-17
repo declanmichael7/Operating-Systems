@@ -17,6 +17,8 @@ var TSOS;
                 this.partition0 = true;
             }
         };
+        MemoryManager.prototype.assignMem = function () {
+        };
         return MemoryManager;
     }());
     TSOS.MemoryManager = MemoryManager;

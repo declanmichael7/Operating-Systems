@@ -371,8 +371,9 @@ var TSOS;
                     i++;
                 }
                 if (validCommand) {
-                    _Process1 = new TSOS.Pcb("0", 0);
-                    _StdOut.putText("pid:" + _Process1.pid);
+                    _Processes.push(new TSOS.Pcb(processNum, _MemoryManager.assignMem()));
+                    _StdOut.putText("process " + processNum);
+                    processNum++;
                     i = 0;
                     var ind = 0;
                     var indHex;

@@ -178,10 +178,8 @@ module TSOS {
         }
 
         public runProgram(pid) {
-            if (pid == 0) {
-                _Process1.state = "Running";
-                _CPU.isExecuting = true;
-            }
+           _Processes[pid].state = "Running";
+           _CPU.isExecuting = true;
         }
     }
 }

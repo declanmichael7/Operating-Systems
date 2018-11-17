@@ -28,7 +28,7 @@ const KEYBOARD_IRQ: number = 1;
 var _CPU: TSOS.Cpu;  // Utilize TypeScript's type annotation system to ensure that _CPU is an instance of the Cpu class.
 var _Memory: TSOS.Memory;
 var _MemoryAccessor: TSOS.MemoryAccessor;
-var _Process1: TSOS.Pcb;
+var _Processes = [];
 
 var _MemoryManager: any = null;
 
@@ -85,6 +85,7 @@ var StatusText: string = "Saving the Mushroom Kingdom";
 var tempStr: string;
 var i: number = 0;
 
+var processNum = 0;
 var program: string;
 var noSpaces: string;
 var opCodes = [];

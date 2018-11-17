@@ -2,7 +2,7 @@
 
 module TSOS {
     export class Pcb {
-        constructor(public pid: string,
+        constructor(public pid: number,
             public memLocation: number,
             public PC: number = 0,
             public Acc: number = 0,
