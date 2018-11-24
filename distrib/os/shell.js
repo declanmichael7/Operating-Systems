@@ -371,33 +371,39 @@ var TSOS;
                     i++;
                 }
                 if (validCommand) {
-                    _Processes.push(new TSOS.Pcb(processNum, _MemoryManager.assignMem()));
-                    _StdOut.putText("process " + processNum);
-                    processNum++;
-                    i = 0;
-                    var ind = 0;
-                    var indHex;
-                    var opCode;
-                    while (i <= program.length) {
-                        opCode = program.charAt(i - 1) + program.charAt(i);
-                        if (((i - 1) % 3) == 0) {
-                            if (ind <= 15) {
-                                var indHex = '0' + TSOS.Utils.toHex(ind);
+                    _Processes.push(new TSOS.Pcb(processNum, null));
+                    _MemoryManager.assignMem(processNum);
+                    if (!_MemoryManager.memLoaded) {
+                        _StdOut.putText("There is no room in memory");
+                    }
+                    else {
+                        _StdOut.putText("process " + processNum);
+                        i = 0;
+                        var ind = 0;
+                        var indHex;
+                        var opCode;
+                        while (i <= program.length) {
+                            opCode = program.charAt(i - 1) + program.charAt(i);
+                            if (((i - 1) % 3) == 0) {
+                                if (ind <= 15) {
+                                    var indHex = '0' + TSOS.Utils.toHex(ind);
+                                }
+                                else {
+                                    var indHex = TSOS.Utils.toHex(ind);
+                                }
+                                _MemoryAccessor.writeMem(ind, _Processes[processNum].memLocation, opCode);
+                                ind++;
                             }
-                            else {
-                                var indHex = TSOS.Utils.toHex(ind);
-                            }
-                            _MemoryAccessor.writeMem(ind, _CPU.currentPartition, opCode);
-                            ind++;
+                            i++;
                         }
-                        i++;
+                        _Memory.lengthUsed = ind;
+                        _Kernel.krnTrace("Length = " + _Memory.lengthUsed);
+                        for (i = _Memory.lengthUsed; i < 256; i++) {
+                            _MemoryAccessor.writeMem(i, _CPU.currentPartition, '00');
+                        }
+                        i = 0;
+                        processNum++;
                     }
-                    _Memory.lengthUsed = ind;
-                    _Kernel.krnTrace("Length = " + _Memory.lengthUsed);
-                    for (i = _Memory.lengthUsed; i < 256; i++) {
-                        _MemoryAccessor.writeMem(i, _CPU.currentPartition, '00');
-                    }
-                    i = 0;
                 }
             }
         };

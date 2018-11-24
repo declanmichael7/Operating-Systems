@@ -55,7 +55,7 @@ var previousCommand = [];
 //For command history. An number that references how far back in their command history they are looking
 var commandIndex;
 var isShifted;
-//Set the initial proompt string
+//Set the initial prompt string
 var promptStr = ">";
 //The current Status
 var StatusText = "Saving the Mushroom Kingdom";

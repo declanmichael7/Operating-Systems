@@ -5,11 +5,14 @@ var TSOS;
         function MemoryAccessor() {
         }
         MemoryAccessor.prototype.writeMem = function (position, partition, opCode) {
-            _Memory[position + (partition * 255)] = opCode;
+            _Memory[partition][position] = opCode;
             TSOS.Control.updateMemory(position, partition);
         };
         MemoryAccessor.prototype.readMem = function (position, partition) {
-            return _Memory[position + (partition * 256)];
+            return _Memory[partition][position];
+        };
+        MemoryAccessor.prototype.clearMem = function () {
+            _Memory.init();
         };
         return MemoryAccessor;
     }());

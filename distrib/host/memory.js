@@ -2,17 +2,21 @@
 var TSOS;
 (function (TSOS) {
     var Memory = /** @class */ (function () {
-        function Memory(maxLength, lengthUsed) {
-            if (maxLength === void 0) { maxLength = 255; }
+        function Memory(lengthUsed) {
             if (lengthUsed === void 0) { lengthUsed = 0; }
-            this.maxLength = maxLength;
             this.lengthUsed = lengthUsed;
         }
         Memory.prototype.init = function () {
+            var j = 0;
             i = 0;
-            while (i < 256) {
-                _Memory[i] = '00';
-                i++;
+            while (j < 3) {
+                _Memory[j] = [];
+                while (i < 256) {
+                    _MemoryAccessor.writeMem(i, j, '00');
+                    i++;
+                }
+                j++;
+                i = 0;
             }
         };
         return Memory;

@@ -5,11 +5,14 @@ module TSOS {
         constructor(
         ) { }
         public writeMem(position, partition, opCode) {
-            _Memory[position + (partition * 255)] = opCode;
+            _Memory[partition][position] = opCode;
             Control.updateMemory(position, partition);
         }
         public readMem(position, partition) {
-            return _Memory[position + (partition * 256)];
+            return _Memory[partition][position];
+        }
+        public clearMem() {
+            _Memory.init();
         }
     }
 }

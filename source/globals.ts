@@ -75,7 +75,7 @@ var commandIndex: number;
 
 var isShifted: boolean;
 
-//Set the initial proompt string
+//Set the initial prompt string
 var promptStr: string = ">";
 
 //The current Status

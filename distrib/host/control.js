@@ -76,10 +76,9 @@ var TSOS;
             // ... Create and initialize the CPU (because it's part of the hardware)  ...
             _CPU = new TSOS.Cpu(); // Note: We could simulate multi-core systems by instantiating more than one instance of the CPU here.
             _CPU.init(); //       There's more to do, like dealing with scheduling and such, but this would be a start. Pretty cool.
-            _Memory = new TSOS.Memory();
-            _Memory.init();
+            _Memory = new TSOS.Memory;
             _MemoryAccessor = new TSOS.MemoryAccessor();
-            //_Process1 = new Pcb();
+            _Memory.init();
             // ... then set the host clock pulse ...
             _hardwareClockID = setInterval(TSOS.Devices.hostClockPulse, CPU_CLOCK_INTERVAL);
             // .. and call the OS Kernel Bootstrap routine.
@@ -108,12 +107,11 @@ var TSOS;
         };
         Control.updateMemory = function (position, partition) {
             if (position <= 15) {
-                var hexIndex = '0' + TSOS.Utils.toHex(position);
+                var hexIndex = partition + '0' + TSOS.Utils.toHex(position);
             }
             else {
-                var hexIndex = TSOS.Utils.toHex(position);
+                var hexIndex = partition + TSOS.Utils.toHex(position);
             }
-            console.log();
             document.getElementById(hexIndex).innerHTML = _MemoryAccessor.readMem(position, partition);
         };
         return Control;

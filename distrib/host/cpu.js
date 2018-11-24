@@ -118,6 +118,7 @@ var TSOS;
                 document.getElementById('Xreg').innerHTML = "" + 0;
                 document.getElementById('Yreg').innerHTML = "" + 0;
                 document.getElementById('Zflag').innerHTML = "" + 0;
+                _MemoryAccessor.clearMem();
             }
             //CPX
             else if (_MemoryAccessor.readMem(this.PC, this.currentPartition) == 'EC') {
@@ -176,6 +177,7 @@ var TSOS;
                 document.getElementById('Xreg').innerHTML = "" + 0;
                 document.getElementById('Yreg').innerHTML = "" + 0;
                 document.getElementById('Zflag').innerHTML = "" + 0;
+                _MemoryAccessor.clearMem();
             }
         };
         Cpu.prototype.runProgram = function (pid) {
