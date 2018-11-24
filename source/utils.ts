@@ -71,7 +71,6 @@ module TSOS {
                 result = result - 256;
             }
             if (result <= 15) {
-                console.log(result);
                 return "0" + this.toHex(result);
             }
             else {

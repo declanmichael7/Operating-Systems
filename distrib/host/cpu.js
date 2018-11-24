@@ -16,13 +16,14 @@
 var TSOS;
 (function (TSOS) {
     var Cpu = /** @class */ (function () {
-        function Cpu(PC, Acc, Xreg, Yreg, Zflag, currentPartition, isExecuting) {
+        function Cpu(PC, Acc, Xreg, Yreg, Zflag, currentPartition, currentProcess, isExecuting) {
             if (PC === void 0) { PC = 0; }
             if (Acc === void 0) { Acc = '0'; }
             if (Xreg === void 0) { Xreg = '0'; }
             if (Yreg === void 0) { Yreg = '0'; }
             if (Zflag === void 0) { Zflag = '0'; }
             if (currentPartition === void 0) { currentPartition = 0; }
+            if (currentProcess === void 0) { currentProcess = null; }
             if (isExecuting === void 0) { isExecuting = false; }
             this.PC = PC;
             this.Acc = Acc;
@@ -30,6 +31,7 @@ var TSOS;
             this.Yreg = Yreg;
             this.Zflag = Zflag;
             this.currentPartition = currentPartition;
+            this.currentProcess = currentProcess;
             this.isExecuting = isExecuting;
         }
         Cpu.prototype.init = function () {
@@ -39,6 +41,7 @@ var TSOS;
             this.Yreg = '0';
             this.Zflag = '0';
             this.currentPartition = 0;
+            this.currentProcess = null;
             this.isExecuting = false;
         };
         Cpu.prototype.cycle = function () {
@@ -57,7 +60,6 @@ var TSOS;
                 this.Acc = _MemoryAccessor.readMem(TSOS.Utils.toDecimal(_MemoryAccessor.readMem((this.PC + 1), this.currentPartition)), this.currentPartition);
                 this.PC = this.PC + 2;
                 document.getElementById('Acc').innerHTML = "" + this.Acc;
-                console.log(this.Acc);
                 _Kernel.krnTrace('Acc = ' + this.Acc);
             }
             //ADC
@@ -108,6 +110,8 @@ var TSOS;
             else if (_MemoryAccessor.readMem(this.PC, this.currentPartition) == '00') {
                 _Kernel.krnTrace("Break");
                 this.isExecuting = false;
+                _Processes[this.currentProcess].state = "Complete";
+                console.log("Process " + this.currentProcess + " is " + _Processes[this.currentProcess].state);
                 _CPU.init();
                 document.getElementById('PC').innerHTML = "" + 0;
                 document.getElementById('Acc').innerHTML = "" + 0;
@@ -131,7 +135,6 @@ var TSOS;
             else if (_MemoryAccessor.readMem(this.PC, this.currentPartition) == 'D0') {
                 if (this.Zflag == '0') {
                     this.PC = TSOS.Utils.branch(this.PC, _MemoryAccessor.readMem((this.PC + 1), this.currentPartition));
-                    console.log('PC = ' + this.PC);
                 }
                 else {
                     this.PC = this.PC + 1;
@@ -161,9 +164,10 @@ var TSOS;
                 this.PC++;
             }
             document.getElementById('PC').innerHTML = "" + this.PC;
-            /*if (this.PC >= _Memory.lengthUsed) {
+            if (this.PC >= _Memory.lengthUsed - 1) {
                 this.isExecuting = false;
-                _Process1.state = 'Complete';
+                _Processes[this.currentProcess].state = "Complete";
+                console.log("Process " + this.currentProcess + " is " + _Processes[this.currentProcess].state);
                 //Reset the values of everything
                 this.init();
                 //update the CPU table
@@ -172,11 +176,18 @@ var TSOS;
                 document.getElementById('Xreg').innerHTML = "" + 0;
                 document.getElementById('Yreg').innerHTML = "" + 0;
                 document.getElementById('Zflag').innerHTML = "" + 0;
-            }*/
+            }
         };
         Cpu.prototype.runProgram = function (pid) {
-            _Processes[pid].state = "Running";
-            _CPU.isExecuting = true;
+            if (_Processes[pid].state == "Resident") {
+                _Processes[pid].state = "Running";
+                _CPU.isExecuting = true;
+                this.currentProcess = pid;
+                console.log("Process " + this.currentProcess + " is " + _Processes[this.currentProcess].state);
+            }
+            else {
+                _StdOut.putText("That process has already been run");
+            }
         };
         return Cpu;
     }());

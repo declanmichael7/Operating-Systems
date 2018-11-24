@@ -25,6 +25,7 @@ module TSOS {
                     public Yreg: string = '0',
                     public Zflag: string = '0',
                     public currentPartition = 0,
+                    public currentProcess: number = null,
                     public isExecuting: boolean = false) {
 
         }
@@ -36,6 +37,7 @@ module TSOS {
             this.Yreg = '0';
             this.Zflag = '0';
             this.currentPartition = 0;
+            this.currentProcess = null;
             this.isExecuting = false;
         }
 
@@ -55,7 +57,6 @@ module TSOS {
                 this.Acc = _MemoryAccessor.readMem(Utils.toDecimal(_MemoryAccessor.readMem((this.PC + 1), this.currentPartition)), this.currentPartition);
                 this.PC = this.PC + 2;
                 document.getElementById('Acc').innerHTML = "" + this.Acc;
-                console.log(this.Acc);
                 _Kernel.krnTrace('Acc = ' + this.Acc);
             }
             //ADC
@@ -108,6 +109,8 @@ module TSOS {
             else if (_MemoryAccessor.readMem(this.PC, this.currentPartition) == '00') {
                 _Kernel.krnTrace("Break");
                 this.isExecuting = false;
+                _Processes[this.currentProcess].state = "Complete";
+                console.log("Process " + this.currentProcess + " is " + _Processes[this.currentProcess].state);
                 _CPU.init();
                 document.getElementById('PC').innerHTML = "" + 0;
                 document.getElementById('Acc').innerHTML = "" + 0;
@@ -131,7 +134,6 @@ module TSOS {
             else if (_MemoryAccessor.readMem(this.PC, this.currentPartition) == 'D0') {
                 if (this.Zflag == '0') {
                     this.PC = Utils.branch(this.PC, _MemoryAccessor.readMem((this.PC + 1), this.currentPartition));
-                    console.log('PC = ' + this.PC);
                 }
                 else {
                     this.PC = this.PC + 1;
@@ -163,9 +165,10 @@ module TSOS {
                 this.PC++;
             }
             document.getElementById('PC').innerHTML = "" + this.PC;
-            /*if (this.PC >= _Memory.lengthUsed) {
+            if (this.PC >= _Memory.lengthUsed -1) {
                 this.isExecuting = false;
-                _Process1.state = 'Complete';
+                _Processes[this.currentProcess].state = "Complete";
+                console.log("Process " + this.currentProcess + " is " + _Processes[this.currentProcess].state);
                 //Reset the values of everything
                 this.init();
                 //update the CPU table
@@ -174,12 +177,19 @@ module TSOS {
                 document.getElementById('Xreg').innerHTML = "" + 0;
                 document.getElementById('Yreg').innerHTML = "" + 0;
                 document.getElementById('Zflag').innerHTML = "" + 0;
-            }*/
+            }
         }
 
         public runProgram(pid) {
-           _Processes[pid].state = "Running";
-           _CPU.isExecuting = true;
+            if (_Processes[pid].state == "Resident") {
+                _Processes[pid].state = "Running";
+                _CPU.isExecuting = true;
+                this.currentProcess = pid;
+                console.log("Process " + this.currentProcess + " is " +_Processes[this.currentProcess].state);
+            }
+            else {
+                _StdOut.putText("That process has already been run");
+            }
         }
     }
 }
