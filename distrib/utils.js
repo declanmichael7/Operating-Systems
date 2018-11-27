@@ -67,6 +67,7 @@ var TSOS;
             num1 = parseInt(num1, 16);
             num2 = parseInt(num2, 16);
             var result = num1 + num2;
+            console.log(result);
             if (result > 255) {
                 result = result - 256;
             }

@@ -25,6 +25,23 @@ module TSOS {
                 this.memLoaded = false;
             }
         }
-
+        public freeMem(partition) {
+            if (partition == 'all') {
+                this.partition0 = true;
+                this.partition1 = true;
+                this.partition2 = true;
+            }
+            else {
+                if (partition == 0) {
+                    this.partition0 = true;
+                }
+                else if (partition == 1) {
+                    this.partition1 = true;
+                }
+                else if (partition == 2) {
+                    this.partition2 = true;
+                }
+            }
+        }
     }
 }

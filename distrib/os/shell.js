@@ -71,7 +71,14 @@ var TSOS;
             //load
             sc = new TSOS.ShellCommand(this.shellLoad, "load", "- Loads the program in the \'User input\' field");
             this.commandList[this.commandList.length] = sc;
+            //run
             sc = new TSOS.ShellCommand(this.shellRun, "run", "<pid>- Runs a program in memory");
+            this.commandList[this.commandList.length] = sc;
+            //clear
+            sc = new TSOS.ShellCommand(this.shellClear, "clear", "<0-2 or all> - Clears specified partitions of memory");
+            this.commandList[this.commandList.length] = sc;
+            //ps
+            sc = new TSOS.ShellCommand(this.shellPS, "ps", "- gives a list of all of the process IDs and their location in memory");
             this.commandList[this.commandList.length] = sc;
             // Display the initial prompt.
             this.putPrompt();
@@ -377,7 +384,7 @@ var TSOS;
                         _StdOut.putText("There is no room in memory");
                     }
                     else {
-                        _StdOut.putText("process " + processNum);
+                        _StdOut.putText("Process " + processNum + " is loaded in partition " + _Processes[processNum].memLocation);
                         i = 0;
                         var ind = 0;
                         var indHex;
@@ -413,7 +420,56 @@ var TSOS;
                 _StdOut.advanceLine();
             }
             else {
-                _CPU.runProgram(args);
+                if (_Processes[args] == undefined) {
+                    _StdOut.putText("There is no process with that id");
+                }
+                else if (_Processes[args].state !== "Resident") {
+                    _StdOut.putText("That process was " + _Processes[args].state);
+                }
+                else {
+                    _CPU.runProgram(args);
+                }
+            }
+        };
+        Shell.prototype.shellClear = function (args) {
+            if (args != "") {
+                _MemoryAccessor.clearMem(args);
+                if (args == "all") {
+                    _StdOut.putText("All partitions clear");
+                    i = 0;
+                    while (i < _Processes.length) {
+                        if (_Processes[i].state == "Resident") {
+                            _Processes[i].state = "Unloaded";
+                            _Processes[i].memLocation = null;
+                        }
+                        i++;
+                    }
+                }
+                else {
+                    _StdOut.putText("Partition " + args + " is clear");
+                    i = 0;
+                    while (i < _Processes.length) {
+                        if (args == _Processes[i].memLocation) {
+                            _Processes[i].state = "Unloaded";
+                            _Processes[i].memLocation = null;
+                        }
+                        i++;
+                    }
+                }
+            }
+            else {
+                _StdOut.putText("Please specify a partition to clear");
+            }
+        };
+        Shell.prototype.shellPS = function () {
+            i = 0;
+            while (i < _Processes.length) {
+                _StdOut.putText("Process " + _Processes[i].pid + " is " + _Processes[i].state);
+                if (_Processes[i].state == "Resident") {
+                    _StdOut.putText(" in Partition " + _Processes[i].memLocation);
+                }
+                _StdOut.advanceLine();
+                i++;
             }
         };
         return Shell;

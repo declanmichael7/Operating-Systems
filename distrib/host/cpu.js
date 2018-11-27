@@ -62,10 +62,10 @@ var TSOS;
                 document.getElementById('Acc').innerHTML = "" + this.Acc;
                 _Kernel.krnTrace('Acc = ' + this.Acc);
             }
-            //ADC
+            //ADC FIX THIS
             else if (_MemoryAccessor.readMem(this.PC, this.currentPartition) == '6D') {
-                console.log(TSOS.Utils.addHex(_Memory[TSOS.Utils.toDecimal(_Memory[(this.PC + 1)])], this.Acc));
-                this.Acc = TSOS.Utils.addHex(_Memory[TSOS.Utils.toDecimal(_Memory[(this.PC + 1)])], this.Acc), 16;
+                console.log(TSOS.Utils.addHex(_MemoryAccessor.readMem(TSOS.Utils.toDecimal(_MemoryAccessor.readMem(this.PC + 1, this.currentPartition)), this.currentPartition), this.Acc));
+                this.Acc = TSOS.Utils.addHex(_MemoryAccessor.readMem(TSOS.Utils.toDecimal(_MemoryAccessor.readMem(this.PC + 1, this.currentPartition)), this.currentPartition), this.Acc);
                 document.getElementById('Acc').innerHTML = "" + TSOS.Utils.toHex(this.Acc);
                 this.PC = this.PC + 2;
             }
@@ -110,17 +110,18 @@ var TSOS;
             else if (_MemoryAccessor.readMem(this.PC, this.currentPartition) == '00') {
                 _Kernel.krnTrace("Break");
                 this.isExecuting = false;
-                _Processes[this.currentProcess].state = "Complete";
+                _Processes[this.currentProcess].state = "Completed";
+                _Processes[this.currentProcess].memLocation = null;
                 console.log("Process " + this.currentProcess + " is " + _Processes[this.currentProcess].state);
-                _CPU.init();
-                document.getElementById('PC').innerHTML = "" + 0;
-                document.getElementById('Acc').innerHTML = "" + 0;
-                document.getElementById('Xreg').innerHTML = "" + 0;
-                document.getElementById('Yreg').innerHTML = "" + 0;
-                document.getElementById('Zflag').innerHTML = "" + 0;
-                _MemoryAccessor.clearMem();
+                _MemoryAccessor.clearMem(this.currentPartition);
+                this.init();
+                document.getElementById('PC').innerHTML = "0";
+                document.getElementById('Acc').innerHTML = "0";
+                document.getElementById('Xreg').innerHTML = "0";
+                document.getElementById('Yreg').innerHTML = "0";
+                document.getElementById('Zflag').innerHTML = "0";
             }
-            //CPX
+            //CPX Check this
             else if (_MemoryAccessor.readMem(this.PC, this.currentPartition) == 'EC') {
                 if (this.Xreg == _MemoryAccessor.readMem(TSOS.Utils.toDecimal(_MemoryAccessor.readMem((this.PC + 1), this.currentPartition)), this.currentPartition)) {
                     this.Zflag = '1';
@@ -143,7 +144,6 @@ var TSOS;
             }
             //INC
             else if (_MemoryAccessor.readMem(this.PC, this.currentPartition) == 'EE') {
-                console.log(TSOS.Utils.addHex(_MemoryAccessor.readMem(this.PC + 1, this.currentPartition), 1));
                 _MemoryAccessor.writeMem(TSOS.Utils.toDecimal(_MemoryAccessor.readMem(this.PC + 1, this.currentPartition)), this.currentPartition, TSOS.Utils.addHex(_MemoryAccessor.readMem(TSOS.Utils.toDecimal(_MemoryAccessor.readMem(this.PC + 1, this.currentPartition)), this.currentPartition), 1));
                 this.PC = this.PC + 2;
             }
@@ -161,35 +161,32 @@ var TSOS;
                     }
                 }
             }
-            if (this.isExecuting == true) {
-                this.PC++;
-            }
-            document.getElementById('PC').innerHTML = "" + this.PC;
             if (this.PC >= _Memory.lengthUsed - 1) {
                 this.isExecuting = false;
-                _Processes[this.currentProcess].state = "Complete";
+                _Processes[this.currentProcess].state = "Completed";
+                _Processes[this.currentProcess].memLocation = null;
                 console.log("Process " + this.currentProcess + " is " + _Processes[this.currentProcess].state);
+                _MemoryAccessor.clearMem(this.currentPartition);
                 //Reset the values of everything
                 this.init();
                 //update the CPU table
-                document.getElementById('PC').innerHTML = "" + 0;
-                document.getElementById('Acc').innerHTML = "" + 0;
-                document.getElementById('Xreg').innerHTML = "" + 0;
-                document.getElementById('Yreg').innerHTML = "" + 0;
-                document.getElementById('Zflag').innerHTML = "" + 0;
-                _MemoryAccessor.clearMem();
+                document.getElementById('PC').innerHTML = '0';
+                document.getElementById('Acc').innerHTML = '0';
+                document.getElementById('Xreg').innerHTML = '0';
+                document.getElementById('Yreg').innerHTML = '0';
+                document.getElementById('Zflag').innerHTML = '0';
+            }
+            if (this.isExecuting) {
+                this.PC++;
+                document.getElementById('PC').innerHTML = "" + this.PC;
             }
         };
         Cpu.prototype.runProgram = function (pid) {
-            if (_Processes[pid].state == "Resident") {
-                _Processes[pid].state = "Running";
-                _CPU.isExecuting = true;
-                this.currentProcess = pid;
-                console.log("Process " + this.currentProcess + " is " + _Processes[this.currentProcess].state);
-            }
-            else {
-                _StdOut.putText("That process has already been run");
-            }
+            _Processes[pid].state = "Running";
+            _CPU.isExecuting = true;
+            this.currentProcess = pid;
+            console.log("Process " + this.currentProcess + " is " + _Processes[this.currentProcess].state);
+            this.currentPartition = _Processes[pid].memLocation;
         };
         return Cpu;
     }());
