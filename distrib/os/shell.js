@@ -359,6 +359,11 @@ var TSOS;
                 _StdOut.putText("There is no text in the input field");
                 validCommand = false;
             }
+            //Checks to make sure the program isn't too long
+            else if (program.length > 770) {
+                _StdOut.putText("That command is too long");
+                validCommand = false;
+            }
             else {
                 i = 0;
                 var letter;
@@ -378,12 +383,16 @@ var TSOS;
                     i++;
                 }
                 if (validCommand) {
-                    _Processes.push(new TSOS.Pcb(processNum, null, null));
-                    _MemoryManager.assignMem(processNum);
-                    if (!_MemoryManager.memLoaded) {
+                    console.log(_MemoryManager.partition0);
+                    console.log(_MemoryManager.partition1);
+                    console.log(_MemoryManager.partition2);
+                    if (!_MemoryManager.partition0 && !_MemoryManager.partition1 && !_MemoryManager.partition2) {
                         _StdOut.putText("There is no room in memory");
                     }
                     else {
+                        _Processes.push(new TSOS.Pcb(processNum, null, null));
+                        _MemoryManager.assignMem(processNum);
+                        console.log(_Processes.length);
                         _StdOut.putText("Process " + processNum + " is loaded in partition " + _Processes[processNum].memLocation);
                         i = 0;
                         var ind = 0;
@@ -405,7 +414,7 @@ var TSOS;
                         }
                         _Processes[processNum].length = ind - 1;
                         _Kernel.krnTrace("Length = " + _Processes[processNum].length);
-                        for (i = _Processes[processNum].length; i < 256; i++) {
+                        for (i = _Processes[processNum].length; i < 255; i++) {
                             _MemoryAccessor.writeMem(i, _Processes[processNum].memLocation, '00');
                         }
                         i = 0;

@@ -426,13 +426,18 @@ module TSOS {
         public shellGameOver(args) {
             _Kernel.krnTrapError("Manual Crash");
         }
-
+        
         public shellLoad(args) {
             //A boolean to check if the command is valid. innocent until proven guilty
             var validCommand: boolean = true;
             program = (document.getElementById("taProgramInput") as HTMLTextAreaElement).value;
             if (program === "") {
                 _StdOut.putText("There is no text in the input field");
+                validCommand = false;
+            }
+            //Checks to make sure the program isn't too long
+            else if (program.length > 770) {
+                _StdOut.putText("That command is too long")
                 validCommand = false;
             }
             else {
@@ -454,12 +459,13 @@ module TSOS {
                     i++;
                 }
                 if (validCommand) {
-                    _Processes.push(new Pcb(processNum, null, null));
-                    _MemoryManager.assignMem(processNum);
-                    if (!_MemoryManager.memLoaded) {
+                    if (!_MemoryManager.partition0 && !_MemoryManager.partition1 && !_MemoryManager.partition2) {
                         _StdOut.putText("There is no room in memory");
                     }
                     else {
+                        _Processes.push(new Pcb(processNum, null, null));
+                        _MemoryManager.assignMem(processNum);
+                        console.log(_Processes.length);
                         _StdOut.putText("Process " + processNum + " is loaded in partition " + _Processes[processNum].memLocation);
                         i = 0;
                         var ind = 0;
@@ -481,7 +487,7 @@ module TSOS {
                         }
                         _Processes[processNum].length = ind -1;
                         _Kernel.krnTrace("Length = " + _Processes[processNum].length);
-                        for (i = _Processes[processNum].length; i < 256; i++) {
+                        for (i = _Processes[processNum].length; i < 255; i++) {
                             _MemoryAccessor.writeMem(i, _Processes[processNum].memLocation, '00');
                         }
                         i = 0;

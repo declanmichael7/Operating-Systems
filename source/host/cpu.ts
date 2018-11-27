@@ -162,7 +162,7 @@ module TSOS {
                     }
                 }
             }
-            console.log(this.currentProcess);
+            //Something is going wrong with this. It isn't a major issue but during some testing and messing around with the console, I realized that the cpu does one extra cycle after this.isExecuting is set to false. Can't figure out why
             if (this.PC >= _Processes[this.currentProcess].length) {
                 this.isExecuting = false;
                 _Processes[this.currentProcess].state = "Completed";
