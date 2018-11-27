@@ -454,7 +454,7 @@ module TSOS {
                     i++;
                 }
                 if (validCommand) {
-                    _Processes.push(new Pcb(processNum, null));
+                    _Processes.push(new Pcb(processNum, null, null));
                     _MemoryManager.assignMem(processNum);
                     if (!_MemoryManager.memLoaded) {
                         _StdOut.putText("There is no room in memory");
@@ -479,10 +479,10 @@ module TSOS {
                             }
                             i++
                         }
-                        _Memory.lengthUsed = ind;
-                        _Kernel.krnTrace("Length = " + _Memory.lengthUsed);
-                        for (i = _Memory.lengthUsed; i < 256; i++) {
-                            _MemoryAccessor.writeMem(i, _CPU.currentPartition, '00');
+                        _Processes[processNum].length = ind -1;
+                        _Kernel.krnTrace("Length = " + _Processes[processNum].length);
+                        for (i = _Processes[processNum].length; i < 256; i++) {
+                            _MemoryAccessor.writeMem(i, _Processes[processNum].memLocation, '00');
                         }
                         i = 0;
                         processNum++;

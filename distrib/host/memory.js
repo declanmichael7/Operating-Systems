@@ -2,9 +2,7 @@
 var TSOS;
 (function (TSOS) {
     var Memory = /** @class */ (function () {
-        function Memory(lengthUsed) {
-            if (lengthUsed === void 0) { lengthUsed = 0; }
-            this.lengthUsed = lengthUsed;
+        function Memory() {
         }
         Memory.prototype.init = function () {
             var j = 0;

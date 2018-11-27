@@ -2,7 +2,7 @@
 var TSOS;
 (function (TSOS) {
     var Pcb = /** @class */ (function () {
-        function Pcb(pid, memLocation, PC, Acc, Xreg, Yreg, Zflag, state) {
+        function Pcb(pid, memLocation, length, PC, Acc, Xreg, Yreg, Zflag, state) {
             if (PC === void 0) { PC = 0; }
             if (Acc === void 0) { Acc = 0; }
             if (Xreg === void 0) { Xreg = 0; }
@@ -11,6 +11,7 @@ var TSOS;
             if (state === void 0) { state = 'Resident'; }
             this.pid = pid;
             this.memLocation = memLocation;
+            this.length = length;
             this.PC = PC;
             this.Acc = Acc;
             this.Xreg = Xreg;

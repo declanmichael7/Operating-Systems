@@ -2,8 +2,7 @@
 
 module TSOS {
     export class Memory {
-        constructor(public lengthUsed: number = 0
-        ) {
+        constructor() {
         }
 
         public init() {

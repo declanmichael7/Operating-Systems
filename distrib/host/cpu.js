@@ -62,7 +62,7 @@ var TSOS;
                 document.getElementById('Acc').innerHTML = "" + this.Acc;
                 _Kernel.krnTrace('Acc = ' + this.Acc);
             }
-            //ADC FIX THIS
+            //ADC
             else if (_MemoryAccessor.readMem(this.PC, this.currentPartition) == '6D') {
                 console.log(TSOS.Utils.addHex(_MemoryAccessor.readMem(TSOS.Utils.toDecimal(_MemoryAccessor.readMem(this.PC + 1, this.currentPartition)), this.currentPartition), this.Acc));
                 this.Acc = TSOS.Utils.addHex(_MemoryAccessor.readMem(TSOS.Utils.toDecimal(_MemoryAccessor.readMem(this.PC + 1, this.currentPartition)), this.currentPartition), this.Acc);
@@ -121,7 +121,7 @@ var TSOS;
                 document.getElementById('Yreg').innerHTML = "0";
                 document.getElementById('Zflag').innerHTML = "0";
             }
-            //CPX Check this
+            //CPX
             else if (_MemoryAccessor.readMem(this.PC, this.currentPartition) == 'EC') {
                 if (this.Xreg == _MemoryAccessor.readMem(TSOS.Utils.toDecimal(_MemoryAccessor.readMem((this.PC + 1), this.currentPartition)), this.currentPartition)) {
                     this.Zflag = '1';
@@ -161,7 +161,8 @@ var TSOS;
                     }
                 }
             }
-            if (this.PC >= _Memory.lengthUsed - 1) {
+            console.log(this.currentProcess);
+            if (this.PC >= _Processes[this.currentProcess].length) {
                 this.isExecuting = false;
                 _Processes[this.currentProcess].state = "Completed";
                 _Processes[this.currentProcess].memLocation = null;
