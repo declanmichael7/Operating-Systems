@@ -383,16 +383,12 @@ var TSOS;
                     i++;
                 }
                 if (validCommand) {
-                    console.log(_MemoryManager.partition0);
-                    console.log(_MemoryManager.partition1);
-                    console.log(_MemoryManager.partition2);
                     if (!_MemoryManager.partition0 && !_MemoryManager.partition1 && !_MemoryManager.partition2) {
                         _StdOut.putText("There is no room in memory");
                     }
                     else {
                         _Processes.push(new TSOS.Pcb(processNum, null, null));
                         _MemoryManager.assignMem(processNum);
-                        console.log(_Processes.length);
                         _StdOut.putText("Process " + processNum + " is loaded in partition " + _Processes[processNum].memLocation);
                         i = 0;
                         var ind = 0;
@@ -418,6 +414,7 @@ var TSOS;
                             _MemoryAccessor.writeMem(i, _Processes[processNum].memLocation, '00');
                         }
                         i = 0;
+                        TSOS.Control.updatePCB();
                         processNum++;
                     }
                 }
@@ -432,8 +429,8 @@ var TSOS;
                 if (_Processes[args] == undefined) {
                     _StdOut.putText("There is no process with that id");
                 }
-                else if (_Processes[args].state !== "Resident") {
-                    _StdOut.putText("That process was " + _Processes[args].state);
+                else if (_Processes[args].State !== "Resident") {
+                    _StdOut.putText("That process was " + _Processes[args].State);
                 }
                 else {
                     _CPU.runProgram(args);
@@ -447,8 +444,8 @@ var TSOS;
                     _StdOut.putText("All partitions clear");
                     i = 0;
                     while (i < _Processes.length) {
-                        if (_Processes[i].state == "Resident") {
-                            _Processes[i].state = "Unloaded";
+                        if (_Processes[i].State == "Resident") {
+                            _Processes[i].State = "Unloaded";
                             _Processes[i].memLocation = null;
                         }
                         i++;
@@ -459,7 +456,7 @@ var TSOS;
                     i = 0;
                     while (i < _Processes.length) {
                         if (args == _Processes[i].memLocation) {
-                            _Processes[i].state = "Unloaded";
+                            _Processes[i].State = "Unloaded";
                             _Processes[i].memLocation = null;
                         }
                         i++;
@@ -469,12 +466,13 @@ var TSOS;
             else {
                 _StdOut.putText("Please specify a partition to clear");
             }
+            TSOS.Control.updatePCB();
         };
         Shell.prototype.shellPS = function () {
             i = 0;
             while (i < _Processes.length) {
-                _StdOut.putText("Process " + _Processes[i].pid + " is " + _Processes[i].state);
-                if (_Processes[i].state == "Resident") {
+                _StdOut.putText("Process " + _Processes[i].pid + " is " + _Processes[i].State);
+                if (_Processes[i].State == "Resident") {
                     _StdOut.putText(" in Partition " + _Processes[i].memLocation);
                 }
                 _StdOut.advanceLine();

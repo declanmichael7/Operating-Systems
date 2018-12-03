@@ -106,21 +106,6 @@ var TSOS;
             else if (_MemoryAccessor.readMem(this.PC, this.currentPartition) == 'EA') {
                 _Kernel.krnTrace("No Operation");
             }
-            //BRK
-            else if (_MemoryAccessor.readMem(this.PC, this.currentPartition) == '00') {
-                _Kernel.krnTrace("Break");
-                this.isExecuting = false;
-                _Processes[this.currentProcess].state = "Completed";
-                _Processes[this.currentProcess].memLocation = null;
-                console.log("Process " + this.currentProcess + " is " + _Processes[this.currentProcess].state);
-                _MemoryAccessor.clearMem(this.currentPartition);
-                this.init();
-                document.getElementById('PC').innerHTML = "0";
-                document.getElementById('Acc').innerHTML = "0";
-                document.getElementById('Xreg').innerHTML = "0";
-                document.getElementById('Yreg').innerHTML = "0";
-                document.getElementById('Zflag').innerHTML = "0";
-            }
             //CPX
             else if (_MemoryAccessor.readMem(this.PC, this.currentPartition) == 'EC') {
                 if (this.Xreg == _MemoryAccessor.readMem(TSOS.Utils.toDecimal(_MemoryAccessor.readMem((this.PC + 1), this.currentPartition)), this.currentPartition)) {
@@ -161,13 +146,30 @@ var TSOS;
                     }
                 }
             }
-            //Something is going wrong with this. It isn't a major issue but during some testing and messing around with the console, I realized that the cpu does one extra cycle after this.isExecuting is set to false. Can't figure out why
+            //BRK
+            else if (_MemoryAccessor.readMem(this.PC, this.currentPartition) == '00') {
+                _Kernel.krnTrace("Break");
+                this.isExecuting = false;
+                _Processes[this.currentProcess].State = "Completed";
+                _Processes[this.currentProcess].memLocation = null;
+                console.log("Process " + this.currentProcess + " is " + _Processes[this.currentProcess].State);
+                _MemoryAccessor.clearMem(this.currentPartition);
+                TSOS.Control.updatePCB();
+                this.init();
+                document.getElementById('PC').innerHTML = "0";
+                document.getElementById('Acc').innerHTML = "0";
+                document.getElementById('Xreg').innerHTML = "0";
+                document.getElementById('Yreg').innerHTML = "0";
+                document.getElementById('Zflag').innerHTML = "0";
+            }
+            //Something is going wrong with this. It isn't a major issue but during some testing and messing around with the console, I realized that the cpu sometimes does one extra cycle after this.isExecuting is set to false. Can't figure out why
             if (this.PC >= _Processes[this.currentProcess].length) {
                 this.isExecuting = false;
-                _Processes[this.currentProcess].state = "Completed";
+                _Processes[this.currentProcess].State = "Completed";
                 _Processes[this.currentProcess].memLocation = null;
-                console.log("Process " + this.currentProcess + " is " + _Processes[this.currentProcess].state);
+                console.log("Process " + this.currentProcess + " is " + _Processes[this.currentProcess].State);
                 _MemoryAccessor.clearMem(this.currentPartition);
+                TSOS.Control.updatePCB();
                 //Reset the values of everything
                 this.init();
                 //update the CPU table
@@ -180,13 +182,19 @@ var TSOS;
             if (this.isExecuting) {
                 this.PC++;
                 document.getElementById('PC').innerHTML = "" + this.PC;
+                _Processes[this.currentProcess].PC = this.PC;
+                _Processes[this.currentProcess].Acc = this.Acc;
+                _Processes[this.currentProcess].Xreg = this.Xreg;
+                _Processes[this.currentProcess].Yreg = this.Yreg;
+                _Processes[this.currentProcess].Zflag = this.Zflag;
+                TSOS.Control.updatePCB();
             }
         };
         Cpu.prototype.runProgram = function (pid) {
-            _Processes[pid].state = "Running";
+            _Processes[pid].State = "Running";
             _CPU.isExecuting = true;
             this.currentProcess = pid;
-            console.log("Process " + this.currentProcess + " is " + _Processes[this.currentProcess].state);
+            console.log("Process " + this.currentProcess + " is " + _Processes[this.currentProcess].State);
             this.currentPartition = _Processes[pid].memLocation;
         };
         return Cpu;

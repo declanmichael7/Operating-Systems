@@ -5,12 +5,12 @@ module TSOS {
         constructor(public pid: number,
             public memLocation: number,
             public length: number,
-            public PC: number = 0,
-            public Acc: number = 0,
-            public Xreg: number = 0,
-            public Yreg: number = 0,
-            public Zflag: number = 0,
-            public state: string = 'Resident'
+            public PC: string = '0',
+            public Acc: string = '0',
+            public Xreg: string = '0',
+            public Yreg: string = '0',
+            public Zflag: string = '0',
+            public State: string = 'Resident'
         ) { }
     }
 }

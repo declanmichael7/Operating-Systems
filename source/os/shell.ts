@@ -465,7 +465,6 @@ module TSOS {
                     else {
                         _Processes.push(new Pcb(processNum, null, null));
                         _MemoryManager.assignMem(processNum);
-                        console.log(_Processes.length);
                         _StdOut.putText("Process " + processNum + " is loaded in partition " + _Processes[processNum].memLocation);
                         i = 0;
                         var ind = 0;
@@ -491,6 +490,7 @@ module TSOS {
                             _MemoryAccessor.writeMem(i, _Processes[processNum].memLocation, '00');
                         }
                         i = 0;
+                        Control.updatePCB();
                         processNum++;
                         }
                     }
@@ -506,8 +506,8 @@ module TSOS {
                 if (_Processes[args] == undefined) {
                     _StdOut.putText("There is no process with that id");
                 }
-                else if (_Processes[args].state !== "Resident") {
-                    _StdOut.putText("That process was " + _Processes[args].state);
+                else if (_Processes[args].State !== "Resident") {
+                    _StdOut.putText("That process was " + _Processes[args].State);
                 }
                 else {
                     _CPU.runProgram(args);
@@ -522,8 +522,8 @@ module TSOS {
                     _StdOut.putText("All partitions clear");
                     i = 0;
                     while (i < _Processes.length) {
-                        if (_Processes[i].state == "Resident") {
-                            _Processes[i].state = "Unloaded";
+                        if (_Processes[i].State == "Resident") {
+                            _Processes[i].State = "Unloaded";
                             _Processes[i].memLocation = null;
                         }
                         i++;
@@ -534,7 +534,7 @@ module TSOS {
                     i = 0;
                     while (i < _Processes.length) {
                         if (args == _Processes[i].memLocation) {
-                            _Processes[i].state = "Unloaded";
+                            _Processes[i].State = "Unloaded";
                             _Processes[i].memLocation = null;
                         }
                         i++;
@@ -545,13 +545,14 @@ module TSOS {
             else {
                 _StdOut.putText("Please specify a partition to clear");
             }
+            Control.updatePCB();
         }
 
         public shellPS() {
             i = 0;
             while (i < _Processes.length) {
-                _StdOut.putText("Process " + _Processes[i].pid + " is " + _Processes[i].state);
-                if (_Processes[i].state == "Resident") {
+                _StdOut.putText("Process " + _Processes[i].pid + " is " + _Processes[i].State);
+                if (_Processes[i].State == "Resident") {
                     _StdOut.putText(" in Partition " + _Processes[i].memLocation);
                 }
                 _StdOut.advanceLine();
