@@ -47,7 +47,7 @@ module TSOS {
         public cycle(): void {
             // TODO: Accumulate CPU usage and profiling statistics here.
             // Do the real work here. Be sure to set this.isExecuting appropriately.
-            if (this.sinceSwitch == this.quantum && readyQueue.length > 1){
+            if (this.sinceSwitch == this.quantum && readyQueue.length > 1) {
                 this.contextSwitch();
                 this.sinceSwitch = 0;
             }
@@ -165,21 +165,20 @@ module TSOS {
                 readyQueue.shift();
                 if (readyQueue[0] == undefined) {
                     this.isExecuting = false;
+                    this.PC = 0;
+                    this.Acc = '0';
+                    this.Xreg = '0';
+                    this.Yreg = '0';
+                    this.Zflag = '0';
+                    document.getElementById('PC').innerHTML = "0";
+                    document.getElementById('Acc').innerHTML = "0";
+                    document.getElementById('Xreg').innerHTML = "0";
+                    document.getElementById('Yreg').innerHTML = "0";
+                    document.getElementById('Zflag').innerHTML = "0";
                 }
                 else {
-                    this.currentProcess = readyQueue[0];
-                    this.currentPartition = _Processes[this.currentProcess].memLocation;
+                    this.contextSwitch();
                 }
-                this.PC = 0;
-                this.Acc = '0';
-                this.Xreg = '0';
-                this.Yreg = '0';
-                this.Zflag = '0';
-                document.getElementById('PC').innerHTML = "0";
-                document.getElementById('Acc').innerHTML = "0";
-                document.getElementById('Xreg').innerHTML = "0";
-                document.getElementById('Yreg').innerHTML = "0";
-                document.getElementById('Zflag').innerHTML = "0";
             }
             if (this.isExecuting) {
                 this.PC++;
@@ -200,25 +199,24 @@ module TSOS {
                 console.log(readyQueue.toString());
                 if (readyQueue[0] == undefined) {
                     this.isExecuting = false;
+                    //Reset the values of everything
+                    this.PC = 0;
+                    this.Acc = '0';
+                    this.Xreg = '0';
+                    this.Yreg = '0';
+                    this.Zflag = '0';
+                    //update the CPU table
+                    document.getElementById('PC').innerHTML = '0';
+                    document.getElementById('Acc').innerHTML = '0';
+                    document.getElementById('Xreg').innerHTML = '0';
+                    document.getElementById('Yreg').innerHTML = '0';
+                    document.getElementById('Zflag').innerHTML = '0';
                 }
                 else {
-                    this.currentProcess = readyQueue[0];
-                    this.currentPartition = _Processes[this.currentProcess].memLocation;
-                    _Processes[this.currentProcess].State = "Running";
+                    this.contextSwitch();
                 }
+                console.log("Process " + this.currentProcess + " is " + _Processes[this.currentProcess].State);
                 Control.updatePCB();
-                //Reset the values of everything
-                this.PC = 0;
-                this.Acc = '0';
-                this.Xreg = '0';
-                this.Yreg = '0';
-                this.Zflag = '0';
-                //update the CPU table
-                document.getElementById('PC').innerHTML = '0';
-                document.getElementById('Acc').innerHTML = '0';
-                document.getElementById('Xreg').innerHTML = '0';
-                document.getElementById('Yreg').innerHTML = '0';
-                document.getElementById('Zflag').innerHTML = '0';
             }
             this.sinceSwitch++;
         }
@@ -230,24 +228,17 @@ module TSOS {
                     if (_Processes[i].State == "Resident") {
                         readyQueue.push(i);
                         _Processes[i].State = "Waiting";
-                        console.log("Process " + i + " is " + _Processes[i].State);
                     }
                     i++;
                 }
                 this.currentProcess = readyQueue[0];
                 this.currentPartition = _Processes[this.currentProcess].memLocation;
-                console.log(this.currentProcess);
+                _Processes[this.currentProcess].State = "Running";
             }
             else {
-                if (readyQueue.length == 0) {
-                    this.currentProcess = pid;
-                    _Processes[pid].state = "Running";
-                    console.log("Process " + pid + " is " + _Processes[pid].State);
-                }
-                else {
-                    _Processes[pid].state = "Waiting";
-                    console.log("Process " + pid + " is " + _Processes[pid].State);
-                }
+                this.currentProcess = pid;
+                _Processes[pid].State = "Running";
+                console.log("Process " + pid + " is " + _Processes[pid].State);
                 readyQueue.push(pid);
             }
         }
@@ -260,13 +251,19 @@ module TSOS {
             }
             this.currentProcess = readyQueue[0];
             this.currentPartition = _Processes[this.currentProcess].memLocation;
-            _Processes[this.currentProcess].state = "Running";
+            _Processes[this.currentProcess].State = "Running";
+            i = 1;
+            while (i < readyQueue.length) {
+                _Processes[readyQueue[i]].State = "Waiting";
+                i++;
+            }
             this.PC = _Processes[this.currentProcess].PC;
             this.Acc = _Processes[this.currentProcess].Acc;
             this.Xreg = _Processes[this.currentProcess].Xreg;
             this.Yreg = _Processes[this.currentProcess].Yreg;
             this.Zflag = _Processes[this.currentProcess].Zflag;
-            console.log("Switch: " + this.currentProcess);
+            Control.updatePCB();
+            _Kernel.krnTrace("Context switch to process " + this.currentProcess);
         }
     }
 }

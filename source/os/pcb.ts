@@ -5,7 +5,7 @@ module TSOS {
         constructor(public pid: number,
             public memLocation: number,
             public length: number,
-            public PC: string = '0',
+            public PC: number = 0,
             public Acc: string = '0',
             public Xreg: string = '0',
             public Yreg: string = '0',
