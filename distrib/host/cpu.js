@@ -273,7 +273,9 @@ var TSOS;
             var indtoRemove = readyQueue.indexOf(parseInt(process));
             console.log(indtoRemove);
             readyQueue.splice(indtoRemove, 1);
-            this.contextSwitch();
+            if (indtoRemove == 0) {
+                this.contextSwitch();
+            }
         };
         return Cpu;
     }());
