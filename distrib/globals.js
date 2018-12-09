@@ -44,6 +44,7 @@ var _StdOut;
 // UI
 var _Console;
 var _OsShell;
+var readyQueue = [];
 // At least this OS is not trying to kill you. (Yet.)
 var _SarcasticMode = false;
 // You haven't rescued the princess yet

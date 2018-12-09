@@ -16,7 +16,7 @@
 var TSOS;
 (function (TSOS) {
     var Cpu = /** @class */ (function () {
-        function Cpu(PC, Acc, Xreg, Yreg, Zflag, currentPartition, currentProcess, isExecuting) {
+        function Cpu(PC, Acc, Xreg, Yreg, Zflag, currentPartition, currentProcess, sinceSwitch, quantum, isExecuting) {
             if (PC === void 0) { PC = 0; }
             if (Acc === void 0) { Acc = '0'; }
             if (Xreg === void 0) { Xreg = '0'; }
@@ -24,6 +24,8 @@ var TSOS;
             if (Zflag === void 0) { Zflag = '0'; }
             if (currentPartition === void 0) { currentPartition = 0; }
             if (currentProcess === void 0) { currentProcess = null; }
+            if (sinceSwitch === void 0) { sinceSwitch = 0; }
+            if (quantum === void 0) { quantum = 6; }
             if (isExecuting === void 0) { isExecuting = false; }
             this.PC = PC;
             this.Acc = Acc;
@@ -32,6 +34,8 @@ var TSOS;
             this.Zflag = Zflag;
             this.currentPartition = currentPartition;
             this.currentProcess = currentProcess;
+            this.sinceSwitch = sinceSwitch;
+            this.quantum = quantum;
             this.isExecuting = isExecuting;
         }
         Cpu.prototype.init = function () {
@@ -42,11 +46,16 @@ var TSOS;
             this.Zflag = '0';
             this.currentPartition = 0;
             this.currentProcess = null;
+            this.quantum = 6;
             this.isExecuting = false;
         };
         Cpu.prototype.cycle = function () {
             // TODO: Accumulate CPU usage and profiling statistics here.
             // Do the real work here. Be sure to set this.isExecuting appropriately.
+            if (this.sinceSwitch == this.quantum && readyQueue.length > 1) {
+                this.contextSwitch();
+                this.sinceSwitch = 0;
+            }
             _Kernel.krnTrace(this.PC + " " + _MemoryAccessor.readMem(this.PC, this.currentPartition));
             //LDA
             if (_MemoryAccessor.readMem(this.PC, this.currentPartition) == 'A9') {
@@ -149,35 +158,29 @@ var TSOS;
             //BRK
             else if (_MemoryAccessor.readMem(this.PC, this.currentPartition) == '00') {
                 _Kernel.krnTrace("Break");
-                this.isExecuting = false;
                 _Processes[this.currentProcess].State = "Completed";
                 _Processes[this.currentProcess].memLocation = null;
                 console.log("Process " + this.currentProcess + " is " + _Processes[this.currentProcess].State);
                 _MemoryAccessor.clearMem(this.currentPartition);
                 TSOS.Control.updatePCB();
-                this.init();
+                readyQueue.shift();
+                if (readyQueue[0] == undefined) {
+                    this.isExecuting = false;
+                }
+                else {
+                    this.currentProcess = readyQueue[0];
+                    this.currentPartition = _Processes[this.currentProcess].memLocation;
+                }
+                this.PC = 0;
+                this.Acc = '0';
+                this.Xreg = '0';
+                this.Yreg = '0';
+                this.Zflag = '0';
                 document.getElementById('PC').innerHTML = "0";
                 document.getElementById('Acc').innerHTML = "0";
                 document.getElementById('Xreg').innerHTML = "0";
                 document.getElementById('Yreg').innerHTML = "0";
                 document.getElementById('Zflag').innerHTML = "0";
-            }
-            //Something is going wrong with this. It isn't a major issue but during some testing and messing around with the console, I realized that the cpu sometimes does one extra cycle after this.isExecuting is set to false. Can't figure out why
-            if (this.PC >= _Processes[this.currentProcess].length) {
-                this.isExecuting = false;
-                _Processes[this.currentProcess].State = "Completed";
-                _Processes[this.currentProcess].memLocation = null;
-                console.log("Process " + this.currentProcess + " is " + _Processes[this.currentProcess].State);
-                _MemoryAccessor.clearMem(this.currentPartition);
-                TSOS.Control.updatePCB();
-                //Reset the values of everything
-                this.init();
-                //update the CPU table
-                document.getElementById('PC').innerHTML = '0';
-                document.getElementById('Acc').innerHTML = '0';
-                document.getElementById('Xreg').innerHTML = '0';
-                document.getElementById('Yreg').innerHTML = '0';
-                document.getElementById('Zflag').innerHTML = '0';
             }
             if (this.isExecuting) {
                 this.PC++;
@@ -189,13 +192,82 @@ var TSOS;
                 _Processes[this.currentProcess].Zflag = this.Zflag;
                 TSOS.Control.updatePCB();
             }
+            if (this.PC >= _Processes[this.currentProcess].length) {
+                _Processes[this.currentProcess].State = "Completed";
+                _Processes[this.currentProcess].memLocation = null;
+                console.log("Process " + this.currentProcess + " is " + _Processes[this.currentProcess].State);
+                _MemoryAccessor.clearMem(this.currentPartition);
+                readyQueue.shift();
+                console.log(readyQueue.toString());
+                if (readyQueue[0] == undefined) {
+                    this.isExecuting = false;
+                }
+                else {
+                    this.currentProcess = readyQueue[0];
+                    this.currentPartition = _Processes[this.currentProcess].memLocation;
+                    _Processes[this.currentProcess].State = "Running";
+                }
+                TSOS.Control.updatePCB();
+                //Reset the values of everything
+                this.PC = 0;
+                this.Acc = '0';
+                this.Xreg = '0';
+                this.Yreg = '0';
+                this.Zflag = '0';
+                //update the CPU table
+                document.getElementById('PC').innerHTML = '0';
+                document.getElementById('Acc').innerHTML = '0';
+                document.getElementById('Xreg').innerHTML = '0';
+                document.getElementById('Yreg').innerHTML = '0';
+                document.getElementById('Zflag').innerHTML = '0';
+            }
+            this.sinceSwitch++;
         };
         Cpu.prototype.runProgram = function (pid) {
-            _Processes[pid].State = "Running";
             _CPU.isExecuting = true;
-            this.currentProcess = pid;
-            console.log("Process " + this.currentProcess + " is " + _Processes[this.currentProcess].State);
-            this.currentPartition = _Processes[pid].memLocation;
+            if (pid == 'all') {
+                i = 0;
+                while (i < _Processes.length) {
+                    if (_Processes[i].State == "Resident") {
+                        readyQueue.push(i);
+                        _Processes[i].State = "Waiting";
+                        console.log("Process " + i + " is " + _Processes[i].State);
+                    }
+                    i++;
+                }
+                this.currentProcess = readyQueue[0];
+                this.currentPartition = _Processes[this.currentProcess].memLocation;
+                console.log(this.currentProcess);
+            }
+            else {
+                if (readyQueue.length == 0) {
+                    this.currentProcess = pid;
+                    _Processes[pid].state = "Running";
+                    console.log("Process " + pid + " is " + _Processes[pid].State);
+                }
+                else {
+                    _Processes[pid].state = "Waiting";
+                    console.log("Process " + pid + " is " + _Processes[pid].State);
+                }
+                readyQueue.push(pid);
+            }
+        };
+        Cpu.prototype.contextSwitch = function () {
+            if (this.currentProcess != null) {
+                var temp = readyQueue[0];
+                readyQueue.shift();
+                readyQueue.push(temp);
+                console.log(readyQueue.toString());
+            }
+            this.currentProcess = readyQueue[0];
+            this.currentPartition = _Processes[this.currentProcess].memLocation;
+            _Processes[this.currentProcess].state = "Running";
+            this.PC = _Processes[this.currentProcess].PC;
+            this.Acc = _Processes[this.currentProcess].Acc;
+            this.Xreg = _Processes[this.currentProcess].Xreg;
+            this.Yreg = _Processes[this.currentProcess].Yreg;
+            this.Zflag = _Processes[this.currentProcess].Zflag;
+            console.log("Switch: " + this.currentProcess);
         };
         return Cpu;
     }());

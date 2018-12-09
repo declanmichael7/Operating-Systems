@@ -129,6 +129,12 @@ module TSOS {
                                   "<pid>- Runs a program in memory");
             this.commandList[this.commandList.length] = sc;
 
+            //runall
+            sc = new ShellCommand(this.shellRunall,
+                                  "runall",
+                                  "- Runs all programs in memory");
+            this.commandList[this.commandList.length] = sc;
+
             //clear
             sc = new ShellCommand(this.shellClear,
                                   "clear",
@@ -141,6 +147,11 @@ module TSOS {
                                   "- gives a list of all of the process IDs and their location in memory");
             this.commandList[this.commandList.length] = sc;
 
+            //quantum
+            sc = new ShellCommand(this.shellQuantum,
+                                  "quantum",
+                                  "<num> - Sets the quantum for RR scheduling");
+            this.commandList[this.commandList.length] = sc;
 
             // Display the initial prompt.
             this.putPrompt();
@@ -490,6 +501,8 @@ module TSOS {
                             _MemoryAccessor.writeMem(i, _Processes[processNum].memLocation, '00');
                         }
                         i = 0;
+
+                        console.log("Shell: Process " + processNum + " is " + _Processes[processNum].State);
                         Control.updatePCB();
                         processNum++;
                         }
@@ -513,6 +526,10 @@ module TSOS {
                     _CPU.runProgram(args);
                 }
             }
+        }
+
+        public shellRunall() {
+            _CPU.runProgram('all');
         }
 
         public shellClear(args) {
@@ -557,6 +574,16 @@ module TSOS {
                 }
                 _StdOut.advanceLine();
                 i++;
+            }
+        }
+
+        public shellQuantum(args) {
+            if (args == "" || isNaN(args)) {
+                _StdOut.putText("Please give a number");
+            }
+            else {
+                _CPU.quantum = args;
+                _StdOut.putText("The quantum is now " + _CPU.quantum);
             }
         }
     }
