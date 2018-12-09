@@ -271,10 +271,11 @@ var TSOS;
             // UPDATE: Even though we are now working in TypeScript, char and string remain undistinguished.
             //         Consider fixing that.
             if (text !== "") {
+                /*
                 //Scrolling: If we reach a point too low on the canvas, then read what currently is on the screen, clear it, and then paste it a row up
-                /*if (this.currentYPosition >= 540) {
-
-                    for (i = 0; i < 540;) {
+                if (this.currentYPosition >= 540) {
+                    
+                    for (i = this.lineHeight; i < 540;) {
                         var imgData = _DrawingContext.getImageData(0, (i+this.lineHeight), 500, (i+(2*this.lineHeight))
 
                         )
@@ -282,20 +283,21 @@ var TSOS;
                         i = (i + this.lineHeight);
                     }
                 }
-                    /*
-                //Save the contents of the canvas           //Top Corner:
-                var imgData = _DrawingContext.getImageData(4,
-                                                            //Top Corner: The height of a line
-                                                            (_DefaultFontSize +
-                                                             _DrawingContext.fontDescent(this.currentFont, this.currentFontSize) +
-                                                             _FontHeightMargin),
-                                                            //Bottom corner:
-                                                            500,563)
-                //clear the screen
-                this.clearScreen();
-                //Now put the previously saved image on the canvas
+
+                    //Attempt #2
+                    //Save the contents of the canvas           //Top Corner:
+                    var imgData = _DrawingContext.getImageData(4,
+                        //Top Corner: The height of a line
+                        (_DefaultFontSize +
+                            _DrawingContext.fontDescent(this.currentFont, this.currentFontSize) +
+                            _FontHeightMargin),
+                        //Bottom corner:
+                        500, 563)
+                    //clear the screen
+                    this.clearScreen();
+                    //Now put the previously saved image on the canvas
                     _DrawingContext.putImageData(imgData, 4, 0)
-                    this.currentYPosition = this.currentYPosition -33
+                    this.currentYPosition = this.currentYPosition - 33
                 }*/
                 // Draw the text at the current X and Y coordinates.
                 _DrawingContext.drawText(this.currentFont, this.currentFontSize, this.currentXPosition, this.currentYPosition, text);

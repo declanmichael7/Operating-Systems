@@ -266,6 +266,15 @@ var TSOS;
             TSOS.Control.updatePCB();
             _Kernel.krnTrace("Context switch to process " + this.currentProcess);
         };
+        Cpu.prototype.kill = function (process) {
+            _MemoryAccessor.clearMem(_Processes[process].memLocation);
+            _Processes[process].State = "Killed";
+            console.log("Process " + process + " has been " + _Processes[process].State);
+            var indtoRemove = readyQueue.indexOf(parseInt(process));
+            console.log(indtoRemove);
+            readyQueue.splice(indtoRemove, 1);
+            this.contextSwitch();
+        };
         return Cpu;
     }());
     TSOS.Cpu = Cpu;

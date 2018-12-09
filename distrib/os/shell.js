@@ -86,6 +86,9 @@ var TSOS;
             //quantum
             sc = new TSOS.ShellCommand(this.shellQuantum, "quantum", "<num> - Sets the quantum for RR scheduling");
             this.commandList[this.commandList.length] = sc;
+            //kill
+            sc = new TSOS.ShellCommand(this.shellKill, "kill", "<pid> - Terminates a running process");
+            this.commandList[this.commandList.length] = sc;
             // Display the initial prompt.
             this.putPrompt();
         };
@@ -496,6 +499,18 @@ var TSOS;
             else {
                 _CPU.quantum = args;
                 _StdOut.putText("The quantum is now " + _CPU.quantum);
+            }
+        };
+        Shell.prototype.shellKill = function (args) {
+            if (readyQueue.indexOf(parseInt(args)) != -1) {
+                _CPU.kill(args);
+                _StdOut.putText("Process " + args + " has been " + _Processes[args].State);
+            }
+            else {
+                console.log(args);
+                console.log(readyQueue.indexOf(parseInt(args)));
+                console.log(readyQueue.toString());
+                _StdOut.putText("Please give a running pid");
             }
         };
         return Shell;
