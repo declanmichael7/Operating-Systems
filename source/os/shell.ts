@@ -363,9 +363,32 @@ module TSOS {
                         _StdOut.putText("Tests what happens when the OS finds an error");
                         break;
                     case "load":
-                        _StdOut.putText("Checks if the code in user input is valid Hex");
+                        _StdOut.putText("Checks if the user code is valid, then loads it into memory if there's space");
                         break;
-                    // TODO: Make descriptive MANual page entries for the the rest of the shell commands here.
+                    case "run":
+                        _StdOut.putText("Executes a program in memory that you have loaded");
+                        break;
+                    case "runall":
+                        _StdOut.putText("Executes all programs that are available to run");
+                        break;
+                    case "clear":
+                        _StdOut.putText("Resets the given partition of memory to free up space for another program");
+                        break;
+                    case "ps":
+                        _StdOut.putText("Lists all of the processes that have been loaded, and their status");
+                        break;
+                    case "quantum":
+                        _StdOut.putText("Changes how often the CPU switches between processes during RR scheduling");
+                        break;
+                    case "kill":
+                        _StdOut.putText("Stops a process that is currently running, and removes it from memory");
+                        break;
+                    case "setschedule":
+                        _StdOut.putText("Sets how the CPU decides what order to run processes in");
+                        break;
+                    case "getschedule":
+                        _StdOut.putText("Returns the current scheduling algorthm");
+                        break;
                     default:
                         _StdOut.putText("No manual entry for " + args[0] + ".");
                 }
