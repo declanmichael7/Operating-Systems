@@ -79,8 +79,13 @@ var TSOS;
             }
         };
         Utils.branch = function (currentPC, branchAmount) {
+            console.log(branchAmount);
             branchAmount = parseInt(branchAmount, 16);
+            console.log(branchAmount);
+            console.log(currentPC);
             currentPC = currentPC + branchAmount;
+            console.log(currentPC);
+            console.log(Utils.toHex(currentPC));
             if (currentPC >= 255) {
                 currentPC = currentPC - 255;
             }

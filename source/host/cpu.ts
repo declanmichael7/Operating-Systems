@@ -206,14 +206,14 @@ module TSOS {
             _Processes[this.currentProcess].memLocation = null;
             console.log("Process " + this.currentProcess + " is " + _Processes[this.currentProcess].State);
             _MemoryAccessor.clearMem(this.currentPartition);
-            //If the schedule algorithm isn't Priority, then just go to the next item in the ready queue when a process completes
+            //If the schedule algorithm isn't Priority, then just take the process out of the ready queue and it'll go to the next one
             if (this.Schedule == "RR" || this.Schedule == "FCFS") {
-                readyQueue.shift();
+                readyQueue.splice(readyQueue.indexOf(this.currentProcess), 1);
                 console.log(readyQueue.toString());
             }
             //For priority:
             else {
-                //If there are only 2 processes in the ready queue, that means there's only one left. So just shift to it
+            //If there are only 2 processes in the ready queue, that means there's only one left. So just shift to it
                 if (readyQueue.length == 2) {
                     readyQueue.shift();
                     console.log(readyQueue.toString());

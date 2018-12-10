@@ -204,9 +204,9 @@ var TSOS;
             _Processes[this.currentProcess].memLocation = null;
             console.log("Process " + this.currentProcess + " is " + _Processes[this.currentProcess].State);
             _MemoryAccessor.clearMem(this.currentPartition);
-            //If the schedule algorithm isn't Priority, then just go to the next item in the ready queue when a process completes
+            //If the schedule algorithm isn't Priority, then just take the process out of the ready queue and it'll go to the next one
             if (this.Schedule == "RR" || this.Schedule == "FCFS") {
-                readyQueue.shift();
+                readyQueue.splice(readyQueue.indexOf(this.currentProcess), 1);
                 console.log(readyQueue.toString());
             }
             //For priority:
