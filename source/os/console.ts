@@ -284,6 +284,7 @@ module TSOS {
             if (text !== "") {
                 /*
                 //Scrolling: If we reach a point too low on the canvas, then read what currently is on the screen, clear it, and then paste it a row up
+                //Attempt #1
                 if (this.currentYPosition >= 540) {
                     
                     for (i = this.lineHeight; i < 540;) {
@@ -310,6 +311,19 @@ module TSOS {
                     _DrawingContext.putImageData(imgData, 4, 0)
                     this.currentYPosition = this.currentYPosition - 33
                 }*/
+                //Attempt #3 IT FINALLY WORKS
+                if (this.currentYPosition >= 540) {
+                    //Save whats on the canvas
+                    var imgData = _DrawingContext.getImageData(0, 0, _Canvas.width, _Canvas.height);
+                    //Figure out how much you need to scroll
+                    var toScroll = (this.currentYPosition - _Canvas.height) + this.lineHeight;
+                    //Clear the Screen
+                    this.clearScreen();
+                    //Update where you are
+                    this.currentYPosition = this.currentYPosition - toScroll;
+                    //Draw the contents of the screen (but further down)
+                    _DrawingContext.putImageData(imgData, 0, -(toScroll));
+                }
                 // Draw the text at the current X and Y coordinates.
                 _DrawingContext.drawText(this.currentFont, this.currentFontSize, this.currentXPosition, this.currentYPosition, text);
                 // Move the current X position.

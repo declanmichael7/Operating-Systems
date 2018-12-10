@@ -44,7 +44,7 @@ module TSOS {
             // shutdown
             sc = new ShellCommand(this.shellShutdown,
                                   "shutdown",
-                                  "- Shuts down the virtual OS but leaves the underlying host / hardware simulation running.");
+                                  "- Shuts down the virtual OS");
             this.commandList[this.commandList.length] = sc;
 
             // cls
@@ -144,7 +144,7 @@ module TSOS {
             //ps
             sc = new ShellCommand(this.shellPS,
                                   "ps",
-                                  "- gives a list of all of the process IDs and their location in memory");
+                                  "- gives a list of all of the process IDs and their location");
             this.commandList[this.commandList.length] = sc;
 
             //quantum
@@ -159,6 +159,17 @@ module TSOS {
                                   "<pid> - Terminates a running process");
             this.commandList[this.commandList.length] = sc;
 
+            //setschedule
+            sc = new ShellCommand(this.shellsetSchedule,
+                                  "setschedule",
+                                  "- Sets the Schedule Algorithm. RR, FCFS, or Priority");
+            this.commandList[this.commandList.length] = sc;
+
+            //getschedule
+            sc = new ShellCommand(this.shellgetSchedule,
+                "getschedule",
+                "- Tells you what the current schedule algorithm is");
+            this.commandList[this.commandList.length] = sc;
             // Display the initial prompt.
             this.putPrompt();
         }
@@ -480,7 +491,16 @@ module TSOS {
                         _StdOut.putText("There is no room in memory");
                     }
                     else {
-                        _Processes.push(new Pcb(processNum, null, null));
+                        var priority;
+                        if (args == "") {
+                            //Just a default. 5 seemed like a nice round number, and there's plenty of room to put processes before
+                            priority = 5;
+                        }
+                        else {
+                            priority = parseInt(args);
+                        }
+                        console.log(priority);
+                        _Processes.push(new Pcb(processNum, null, null, priority));
                         _MemoryManager.assignMem(processNum);
                         _StdOut.putText("Process " + processNum + " is loaded in partition " + _Processes[processNum].memLocation);
                         i = 0;
@@ -604,6 +624,29 @@ module TSOS {
                 console.log(readyQueue.toString());
                 _StdOut.putText("Please give a running pid");
             }
+        }
+
+        public shellsetSchedule(args) {
+            if (args == "rr") {
+                _CPU.Schedule = "RR";
+                _StdOut.putText("The schedule is now " + _CPU.Schedule);
+            }
+            else if (args == "fcfs") {
+                _CPU.Schedule = "FCFS";
+                _StdOut.putText("The schedule is now " + _CPU.Schedule);
+            }
+            else if (args == "priority") {
+                _CPU.Schedule = "Priority";
+                _StdOut.putText("The schedule is now " + _CPU.Schedule);
+            }
+            else {
+                _StdOut.putText("Please say either RR, FCFS, or Priority");
+                console.log(args.toString());
+            }
+        }
+
+        public shellgetSchedule() {
+            _StdOut.putText("The current scheduler is " + _CPU.Schedule);
         }
     }
 }

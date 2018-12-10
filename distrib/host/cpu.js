@@ -16,7 +16,7 @@
 var TSOS;
 (function (TSOS) {
     var Cpu = /** @class */ (function () {
-        function Cpu(PC, Acc, Xreg, Yreg, Zflag, currentPartition, currentProcess, sinceSwitch, quantum, isExecuting) {
+        function Cpu(PC, Acc, Xreg, Yreg, Zflag, currentPartition, currentProcess, sinceSwitch, quantum, isExecuting, Schedule) {
             if (PC === void 0) { PC = 0; }
             if (Acc === void 0) { Acc = '0'; }
             if (Xreg === void 0) { Xreg = '0'; }
@@ -27,6 +27,7 @@ var TSOS;
             if (sinceSwitch === void 0) { sinceSwitch = 0; }
             if (quantum === void 0) { quantum = 6; }
             if (isExecuting === void 0) { isExecuting = false; }
+            if (Schedule === void 0) { Schedule = "RR"; }
             this.PC = PC;
             this.Acc = Acc;
             this.Xreg = Xreg;
@@ -37,6 +38,7 @@ var TSOS;
             this.sinceSwitch = sinceSwitch;
             this.quantum = quantum;
             this.isExecuting = isExecuting;
+            this.Schedule = Schedule;
         }
         Cpu.prototype.init = function () {
             this.PC = 0;
@@ -48,11 +50,12 @@ var TSOS;
             this.currentProcess = null;
             this.quantum = 6;
             this.isExecuting = false;
+            this.Schedule = "RR";
         };
         Cpu.prototype.cycle = function () {
             // TODO: Accumulate CPU usage and profiling statistics here.
             // Do the real work here. Be sure to set this.isExecuting appropriately.
-            if (this.sinceSwitch == this.quantum && readyQueue.length > 1) {
+            if (this.sinceSwitch == this.quantum && readyQueue.length > 1 && this.Schedule == "RR") {
                 this.contextSwitch();
                 this.sinceSwitch = 0;
             }
@@ -157,29 +160,7 @@ var TSOS;
             }
             //BRK
             else if (_MemoryAccessor.readMem(this.PC, this.currentPartition) == '00') {
-                _Kernel.krnTrace("Break");
-                _Processes[this.currentProcess].State = "Completed";
-                _Processes[this.currentProcess].memLocation = null;
-                console.log("Process " + this.currentProcess + " is " + _Processes[this.currentProcess].State);
-                _MemoryAccessor.clearMem(this.currentPartition);
-                TSOS.Control.updatePCB();
-                readyQueue.shift();
-                if (readyQueue[0] == undefined) {
-                    this.isExecuting = false;
-                    this.PC = 0;
-                    this.Acc = '0';
-                    this.Xreg = '0';
-                    this.Yreg = '0';
-                    this.Zflag = '0';
-                    document.getElementById('PC').innerHTML = "0";
-                    document.getElementById('Acc').innerHTML = "0";
-                    document.getElementById('Xreg').innerHTML = "0";
-                    document.getElementById('Yreg').innerHTML = "0";
-                    document.getElementById('Zflag').innerHTML = "0";
-                }
-                else {
-                    this.contextSwitch();
-                }
+                this.completeProcess();
             }
             if (this.isExecuting) {
                 this.PC++;
@@ -192,32 +173,7 @@ var TSOS;
                 TSOS.Control.updatePCB();
             }
             if (this.PC >= _Processes[this.currentProcess].length) {
-                _Processes[this.currentProcess].State = "Completed";
-                _Processes[this.currentProcess].memLocation = null;
-                console.log("Process " + this.currentProcess + " is " + _Processes[this.currentProcess].State);
-                _MemoryAccessor.clearMem(this.currentPartition);
-                readyQueue.shift();
-                console.log(readyQueue.toString());
-                if (readyQueue[0] == undefined) {
-                    this.isExecuting = false;
-                    //Reset the values of everything
-                    this.PC = 0;
-                    this.Acc = '0';
-                    this.Xreg = '0';
-                    this.Yreg = '0';
-                    this.Zflag = '0';
-                    //update the CPU table
-                    document.getElementById('PC').innerHTML = '0';
-                    document.getElementById('Acc').innerHTML = '0';
-                    document.getElementById('Xreg').innerHTML = '0';
-                    document.getElementById('Yreg').innerHTML = '0';
-                    document.getElementById('Zflag').innerHTML = '0';
-                }
-                else {
-                    this.contextSwitch();
-                }
-                console.log("Process " + this.currentProcess + " is " + _Processes[this.currentProcess].State);
-                TSOS.Control.updatePCB();
+                this.completeProcess();
             }
             this.sinceSwitch++;
         };
@@ -243,8 +199,62 @@ var TSOS;
                 readyQueue.push(pid);
             }
         };
+        Cpu.prototype.completeProcess = function () {
+            _Processes[this.currentProcess].State = "Completed";
+            _Processes[this.currentProcess].memLocation = null;
+            console.log("Process " + this.currentProcess + " is " + _Processes[this.currentProcess].State);
+            _MemoryAccessor.clearMem(this.currentPartition);
+            if (this.Schedule == "RR" || this.Schedule == "FCFS" || readyQueue.length == 1) {
+                readyQueue.shift();
+                console.log(readyQueue.toString());
+            }
+            else {
+                if (readyQueue.length == 2) {
+                    readyQueue.shift();
+                    console.log(readyQueue.toString());
+                }
+                else {
+                    i = 1;
+                    var lowestPriorityProcess = readyQueue[0];
+                    while (i < readyQueue.length) {
+                        if (_Processes[readyQueue[i]].Priority < _Processes[lowestPriorityProcess].Priority) {
+                            console.log(readyQueue[i] + " is lower priority than " + lowestPriorityProcess);
+                            lowestPriorityProcess = readyQueue[i];
+                        }
+                        console.log("Lowest: " + lowestPriorityProcess + " Priority: " + _Processes[lowestPriorityProcess].Priority);
+                        i++;
+                    }
+                    this.currentProcess = lowestPriorityProcess;
+                    this.currentPartition = _Processes[lowestPriorityProcess].memLocation;
+                    _Processes[lowestPriorityProcess].State = "Running";
+                    console.log(readyQueue.toString());
+                    readyQueue.splice(readyQueue.indexOf(lowestPriorityProcess), 1);
+                    readyQueue[0] = lowestPriorityProcess;
+                    console.log(readyQueue.toString());
+                }
+            }
+            if (readyQueue[0] == undefined) {
+                this.isExecuting = false;
+                //Reset the values of everything
+                this.PC = 0;
+                this.Acc = '0';
+                this.Xreg = '0';
+                this.Yreg = '0';
+                this.Zflag = '0';
+                //update the CPU table
+                document.getElementById('PC').innerHTML = '0';
+                document.getElementById('Acc').innerHTML = '0';
+                document.getElementById('Xreg').innerHTML = '0';
+                document.getElementById('Yreg').innerHTML = '0';
+                document.getElementById('Zflag').innerHTML = '0';
+            }
+            else {
+                this.contextSwitch();
+            }
+            TSOS.Control.updatePCB();
+        };
         Cpu.prototype.contextSwitch = function () {
-            if (this.currentProcess != null) {
+            if (this.currentProcess != null && this.Schedule != "Priority") {
                 var temp = readyQueue[0];
                 readyQueue.shift();
                 readyQueue.push(temp);

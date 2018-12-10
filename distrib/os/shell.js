@@ -31,7 +31,7 @@ var TSOS;
             sc = new TSOS.ShellCommand(this.shellHelp, "help", "- This is the help command. Seek help.");
             this.commandList[this.commandList.length] = sc;
             // shutdown
-            sc = new TSOS.ShellCommand(this.shellShutdown, "shutdown", "- Shuts down the virtual OS but leaves the underlying host / hardware simulation running.");
+            sc = new TSOS.ShellCommand(this.shellShutdown, "shutdown", "- Shuts down the virtual OS");
             this.commandList[this.commandList.length] = sc;
             // cls
             sc = new TSOS.ShellCommand(this.shellCls, "cls", "- Clears the screen and resets the cursor position.");
@@ -81,13 +81,19 @@ var TSOS;
             sc = new TSOS.ShellCommand(this.shellClear, "clear", "<0-2 or all> - Clears specified partitions of memory");
             this.commandList[this.commandList.length] = sc;
             //ps
-            sc = new TSOS.ShellCommand(this.shellPS, "ps", "- gives a list of all of the process IDs and their location in memory");
+            sc = new TSOS.ShellCommand(this.shellPS, "ps", "- gives a list of all of the process IDs and their location");
             this.commandList[this.commandList.length] = sc;
             //quantum
             sc = new TSOS.ShellCommand(this.shellQuantum, "quantum", "<num> - Sets the quantum for RR scheduling");
             this.commandList[this.commandList.length] = sc;
             //kill
             sc = new TSOS.ShellCommand(this.shellKill, "kill", "<pid> - Terminates a running process");
+            this.commandList[this.commandList.length] = sc;
+            //setschedule
+            sc = new TSOS.ShellCommand(this.shellsetSchedule, "setschedule", "- Sets the Schedule Algorithm. RR, FCFS, or Priority");
+            this.commandList[this.commandList.length] = sc;
+            //getschedule
+            sc = new TSOS.ShellCommand(this.shellgetSchedule, "getschedule", "- Tells you what the current schedule algorithm is");
             this.commandList[this.commandList.length] = sc;
             // Display the initial prompt.
             this.putPrompt();
@@ -396,7 +402,16 @@ var TSOS;
                         _StdOut.putText("There is no room in memory");
                     }
                     else {
-                        _Processes.push(new TSOS.Pcb(processNum, null, null));
+                        var priority;
+                        if (args == "") {
+                            //Just a default. 5 seemed like a nice round number, and there's plenty of room to put processes before
+                            priority = 5;
+                        }
+                        else {
+                            priority = parseInt(args);
+                        }
+                        console.log(priority);
+                        _Processes.push(new TSOS.Pcb(processNum, null, null, priority));
                         _MemoryManager.assignMem(processNum);
                         _StdOut.putText("Process " + processNum + " is loaded in partition " + _Processes[processNum].memLocation);
                         i = 0;
@@ -512,6 +527,27 @@ var TSOS;
                 console.log(readyQueue.toString());
                 _StdOut.putText("Please give a running pid");
             }
+        };
+        Shell.prototype.shellsetSchedule = function (args) {
+            if (args == "rr") {
+                _CPU.Schedule = "RR";
+                _StdOut.putText("The schedule is now " + _CPU.Schedule);
+            }
+            else if (args == "fcfs") {
+                _CPU.Schedule = "FCFS";
+                _StdOut.putText("The schedule is now " + _CPU.Schedule);
+            }
+            else if (args == "priority") {
+                _CPU.Schedule = "Priority";
+                _StdOut.putText("The schedule is now " + _CPU.Schedule);
+            }
+            else {
+                _StdOut.putText("Please say either RR, FCFS, or Priority");
+                console.log(args.toString());
+            }
+        };
+        Shell.prototype.shellgetSchedule = function () {
+            _StdOut.putText("The current scheduler is " + _CPU.Schedule);
         };
         return Shell;
     }());

@@ -35,8 +35,8 @@
 
     <!-- Other Routines -->
     <script type="text/javascript" src="distrib/utils.js"></script>
-    <!-- Uncomment the line below to enable GLaDOS testing.-->
-    <script type="text/javascript" src="http://alanclasses.github.io/TSOS/test/glados-ip0.js"></script>
+    <!-- Uncomment the line below to enable GLaDOS testing.
+    <script type="text/javascript" src="http://alanclasses.github.io/TSOS/test/glados-ip0.js"></script>-->
 
 </head>
 
@@ -80,15 +80,15 @@
              onclick="TSOS.Control.hostBtnReset_click(this);">
    </div>
 
-   <div id="divConsole" style="margin:4px; width:500px; height:563px; float:left;">
+   <div id="divConsole" style="margin:4px; width:575px; height:563px; float:left;">
       <canvas id="display"
-              width="500px"
+              width="575px"
               height="563px"
               tabindex="3">
       </canvas>
    </div>
 
-   <div id="divLog" style="margin-left:520px;">
+   <div id="divLog" style="margin-left:595px;">
       <label>
          Host Log
          <br>
@@ -100,7 +100,7 @@
       </label>
    </div>
 
-   <div id="divUserProgramInput" style="margin-left:520px;">
+   <div id="divUserProgramInput" style="margin-left:595px;">
       <label>
          User Program Input
          <br>
@@ -112,7 +112,7 @@
       </label>
    </div>
 
-    <div id="divMemory" style="position: relative; left:890px; bottom:573px; width:280px; height:300px; overflow:scroll;">
+    <div id="divMemory" style="position: relative; left:975px; bottom:573px; width:280px; height:300px; overflow-y:scroll;">
         <p>
             Memory
         </p>
@@ -1194,7 +1194,7 @@
         </table>
     </div>
 
-    <div id="divCPU" style="position:relative; left:890px; bottom:573px">
+    <div id="divCPU" style="position:relative; left:975px; bottom:573px">
         <p>
             CPU
         </p>
@@ -1222,7 +1222,7 @@
             </table>
     </div>
 
-    <div id="divPCB" style="position:relative; left:980px; bottom:747px">
+    <div id="divPCB" style="position:relative; left:1060px; bottom:747px">
         <p>
             PCB
         </p>
@@ -1234,6 +1234,7 @@
                 <td>Xreg</td>
                 <td>Yreg</td>
                 <td>Zflag</td>
+                <td>Priority</td>
                 <td>State</td>
             </tr>
         </table>

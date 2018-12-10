@@ -119,10 +119,10 @@ var TSOS;
             var table = document.getElementById("pcbTable");
             table.innerHTML = "";
             //For some reason Typescript isn't recognizing the table as a table, just an HTML element. So I have to insert the HTML instead of being able to do things like insertRow()
-            var tableHTML = "<table id='pcbTable' style='background-color:white;'><tr><td>PID</td><td>PC</td><td>ACC</td><td>Xreg</td><td>Yreg</td><td>Zflag</td><td>State</td></tr>";
+            var tableHTML = "<table id='pcbTable' style='background-color:white;'><tr><td>PID</td><td>PC</td><td>ACC</td><td>Xreg</td><td>Yreg</td><td>Zflag</td><td>Priority</td><td>State</td></tr>";
             i = 0;
             while (i < _Processes.length) {
-                tableHTML += "<tr><td>" + _Processes[i].pid + "</td><td>" + _Processes[i].PC + "</td><td>" + _Processes[i].Acc + "</td><td>" + _Processes[i].Xreg + "</td><td>" + _Processes[i].Yreg + "</td><td>" + _Processes[i].Zflag + "</td><td>" + _Processes[i].State + "</td></tr> ";
+                tableHTML += "<tr><td>" + _Processes[i].pid + "</td><td>" + _Processes[i].PC + "</td><td>" + _Processes[i].Acc + "</td><td>" + _Processes[i].Xreg + "</td><td>" + _Processes[i].Yreg + "</td><td>" + _Processes[i].Zflag + "</td><td>" + _Processes[i].Priority + "</td><td>" + _Processes[i].State + "</td></tr> ";
                 i++;
             }
             //This should be the last thing
