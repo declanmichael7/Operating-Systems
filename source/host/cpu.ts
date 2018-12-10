@@ -206,17 +206,22 @@ module TSOS {
             _Processes[this.currentProcess].memLocation = null;
             console.log("Process " + this.currentProcess + " is " + _Processes[this.currentProcess].State);
             _MemoryAccessor.clearMem(this.currentPartition);
-            if (this.Schedule == "RR" || this.Schedule == "FCFS" || readyQueue.length == 1) {
+            //If the schedule algorithm isn't Priority, then just go to the next item in the ready queue when a process completes
+            if (this.Schedule == "RR" || this.Schedule == "FCFS") {
                 readyQueue.shift();
                 console.log(readyQueue.toString());
             }
+            //For priority:
             else {
+                //If there are only 2 processes in the ready queue, that means there's only one left. So just shift to it
                 if (readyQueue.length == 2) {
                     readyQueue.shift();
                     console.log(readyQueue.toString());
                 }
                 else {
+                    //Loop through the ready queue to check the priority of each process
                     i = 1;
+                    //If they all have the same priority, then run the next one in the queue
                     var lowestPriorityProcess = readyQueue[0];
                     while (i < readyQueue.length) {
                         if (_Processes[readyQueue[i]].Priority < _Processes[lowestPriorityProcess].Priority) {
@@ -226,15 +231,19 @@ module TSOS {
                         console.log("Lowest: " + lowestPriorityProcess + " Priority: " + _Processes[lowestPriorityProcess].Priority);
                         i++;
                     }
+                    //Set the current process to the lowest priority process
                     this.currentProcess = lowestPriorityProcess;
                     this.currentPartition = _Processes[lowestPriorityProcess].memLocation;
                     _Processes[lowestPriorityProcess].State = "Running";
-                    console.log(readyQueue.toString());
+                    //Instead of removing the first process in the queue (the one that just completed) and putting the lowest priority process first...
+                    //...Remove the index of the queue that contains the process you're going to run...
                     readyQueue.splice(readyQueue.indexOf(lowestPriorityProcess), 1);
+                    //...And move it to the front of the queue (which won't affect anything else because that is the process that just completed)
                     readyQueue[0] = lowestPriorityProcess;
                     console.log(readyQueue.toString());
                 }
             }
+            //If there's nothing left in the ready queue, reset the state of the cpu
             if (readyQueue[0] == undefined) {
                 this.isExecuting = false;
                 //Reset the values of everything
@@ -250,6 +259,7 @@ module TSOS {
                 document.getElementById('Yreg').innerHTML = '0';
                 document.getElementById('Zflag').innerHTML = '0';
             }
+            //If there are more processes left to run, switch to the next one in the ready queue
             else {
                 this.contextSwitch();
             }
@@ -283,12 +293,14 @@ module TSOS {
 
 
         public kill(process) {
+            //In order to kill a process, it has to be taken out of the ready queue, have the memory it was taking up be erased, and have it's state updated
             _MemoryAccessor.clearMem(_Processes[process].memLocation);
             _Processes[process].State = "Killed";
             console.log("Process " + process + " has been " + _Processes[process].State);
             var indtoRemove = readyQueue.indexOf(parseInt(process));
             console.log(indtoRemove);
             readyQueue.splice(indtoRemove, 1);
+            //Now that it's removed from the ready queue, make sure that it wasn't the process that was currently running. If it was, then switch to the next one in the queue
             if (indtoRemove == 0) {
                 this.contextSwitch();
             }
