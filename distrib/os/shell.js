@@ -359,6 +359,7 @@ var TSOS;
         };
         Shell.prototype.shellWhereAmI = function (args) {
             _StdOut.putText("You are between your keyboard and your chair");
+            _DiskDeviceDriver.krnDiskRollOut(1);
         };
         Shell.prototype.shellRescue = function (args) {
             if (RescueCount < 7) {

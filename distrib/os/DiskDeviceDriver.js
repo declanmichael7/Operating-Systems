@@ -74,8 +74,20 @@ var TSOS;
             tableString += "</table>";
             table.innerHTML = tableString;
         };
-        DiskDeviceDriver.prototype.krnDiskRollOut = function () {
-            //Roll in one process and roll out another
+        DiskDeviceDriver.prototype.krnDiskRollOut = function (processOut) {
+            //Roll out one process and roll in another
+            var process = "";
+            i = 0;
+            while (i <= _Processes[processOut].length) {
+                process += _MemoryAccessor.readMem(i, _Processes[processOut].memLocation) + " ";
+                i++;
+            }
+            _MemoryAccessor.clearMem(_Processes[processOut].memLocation);
+            _Processes[processOut].memlocation = this.krnFindFreeFrame();
+            this.krnDiskLoad(this.krnFindFreeFrame(), process);
+            _Processes[processOut].State = "Disk";
+            TSOS.Control.updatePCB();
+            this.updateDiskDisplay();
         };
         //Finds a free frame to load a process or file
         DiskDeviceDriver.prototype.krnFindFreeFrame = function () {
