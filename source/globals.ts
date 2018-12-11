@@ -91,7 +91,6 @@ var i: number = 0;
 
 var processNum = 0;
 var program: string;
-var noSpaces: string;
 var opCodes = [];
 
 // Global Device Driver Objects - page 12

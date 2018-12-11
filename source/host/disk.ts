@@ -13,16 +13,19 @@ module TSOS {
             var t = 0;
             var s = 0;
             var b = 0;
-            var pos = 0;
+            var pos = '0';
             while (t < this.trackNum) {
                 s = 0;
                 while (s < this.sectorNum) {
                     b = 0;
                     while (b < this.blockNum) {
-                        pos = 0;
-                        while (pos < this.blockSize) {
+                        pos = '0';
+                        while (parseInt(pos) < this.blockSize) {
+                            if ((parseInt(pos) < 10)) {
+                                pos = "0" + pos;
+                            }
                             _Disk[t + "" + s+"" + b+"" + pos] = "00";
-                            pos++;
+                            pos = (parseInt(pos) + 1).toString();
                         }
                         b++;
 

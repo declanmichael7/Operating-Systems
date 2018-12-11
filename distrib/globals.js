@@ -67,7 +67,6 @@ var tempStr;
 var i = 0;
 var processNum = 0;
 var program;
-var noSpaces;
 var opCodes = [];
 // Global Device Driver Objects - page 12
 var _krnKeyboardDriver; //  = null;

@@ -6,11 +6,11 @@ module TSOS {
             public memLocation: number,
             public length: number,
             public Priority: number,
+            public State: string,
             public PC: number = 0,
             public Acc: string = '0',
             public Xreg: string = '0',
             public Yreg: string = '0',
-            public Zflag: string = '0',
-            public State: string = 'Resident') { }
+            public Zflag: string = '0') { }
     }
 }

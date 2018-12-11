@@ -518,16 +518,17 @@ module TSOS {
                     i++;
                 }
                 if (validCommand) {
+                    var priority;
+                    if (args == "") {
+                        //Just a default. 5 seemed like a nice round number, and there's plenty of room to put processes before
+                        priority = 5;
+                    }
+                    else {
+                        priority = parseInt(args);
+                    }
                     if (_MemoryManager.partition0 || _MemoryManager.partition1 || _MemoryManager.partition2) {
-                        var priority;
-                        if (args == "") {
-                            //Just a default. 5 seemed like a nice round number, and there's plenty of room to put processes before
-                            priority = 5;
-                        }
-                        else {
-                            priority = parseInt(args);
-                        }
-                        _Processes.push(new Pcb(processNum, null, null, priority));
+                        
+                        _Processes.push(new Pcb(processNum, null, null, priority, "Resident"));
                         _MemoryManager.assignMem(processNum);
                         _StdOut.putText("Process " + processNum + " is loaded in partition " + _Processes[processNum].memLocation);
                         i = 0;
@@ -560,8 +561,19 @@ module TSOS {
                         processNum++;
                     }
                     else {
-                        _StdOut.putText("There is no room in memory");
-                        //_DiskDeviceDriver.krnDiskLoad(program);
+                        if (_Disk.isFormatted) {
+                            var firstFrame = _DiskDeviceDriver.krnFindFreeFrame();
+                            _DiskDeviceDriver.krnDiskLoad(_DiskDeviceDriver.krnFindFreeFrame(), program);
+                            _Processes.push(new Pcb(processNum, parseInt(firstFrame), null, priority, "Disk"));
+                            _Processes[processNum].length = program.length / 3;
+                            _Kernel.krnTrace("Length = " + _Processes[processNum].length);
+                            _StdOut.putText("Process " + processNum + " is loaded on the disk. First tsb is " + firstFrame);
+                            Control.updatePCB();
+                            processNum++;
+                        }
+                        else {
+                            _StdOut.putText("Please format the disk first");
+                        }
                     }
                 }
             }
