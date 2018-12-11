@@ -95,6 +95,9 @@ var TSOS;
             //getschedule
             sc = new TSOS.ShellCommand(this.shellgetSchedule, "getschedule", "- Tells you what the current schedule algorithm is");
             this.commandList[this.commandList.length] = sc;
+            //format
+            sc = new TSOS.ShellCommand(this.shellFormat, "format", "- Formats the disk so that it can be loaded");
+            this.commandList[this.commandList.length] = sc;
             // Display the initial prompt.
             this.putPrompt();
         };
@@ -421,10 +424,7 @@ var TSOS;
                     i++;
                 }
                 if (validCommand) {
-                    if (!_MemoryManager.partition0 && !_MemoryManager.partition1 && !_MemoryManager.partition2) {
-                        _StdOut.putText("There is no room in memory");
-                    }
-                    else {
+                    if (_MemoryManager.partition0 || _MemoryManager.partition1 || _MemoryManager.partition2) {
                         var priority;
                         if (args == "") {
                             //Just a default. 5 seemed like a nice round number, and there's plenty of room to put processes before
@@ -433,7 +433,6 @@ var TSOS;
                         else {
                             priority = parseInt(args);
                         }
-                        console.log(priority);
                         _Processes.push(new TSOS.Pcb(processNum, null, null, priority));
                         _MemoryManager.assignMem(processNum);
                         _StdOut.putText("Process " + processNum + " is loaded in partition " + _Processes[processNum].memLocation);
@@ -464,6 +463,10 @@ var TSOS;
                         console.log("Shell: Process " + processNum + " is " + _Processes[processNum].State);
                         TSOS.Control.updatePCB();
                         processNum++;
+                    }
+                    else {
+                        _StdOut.putText("There is no room in memory");
+                        //_DiskDeviceDriver.krnDiskLoad(program);
                     }
                 }
             }
@@ -571,6 +574,14 @@ var TSOS;
         };
         Shell.prototype.shellgetSchedule = function () {
             _StdOut.putText("The current scheduler is " + _CPU.Schedule);
+        };
+        Shell.prototype.shellFormat = function () {
+            if (_Disk.isFormatted == true) {
+                _StdOut.putText("The disk has already been formatted");
+            }
+            else {
+                _DiskDeviceDriver.krnDiskFormat();
+            }
         };
         return Shell;
     }());

@@ -96,6 +96,7 @@ module TSOS {
             _Memory = new Memory();
             _MemoryAccessor = new MemoryAccessor();
             _Memory.init();
+            _Disk = new Disk();
 
             // ... then set the host clock pulse ...
             _hardwareClockID = setInterval(Devices.hostClockPulse, CPU_CLOCK_INTERVAL);

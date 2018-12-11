@@ -42,7 +42,7 @@ module TSOS {
             this.krnTrace(_krnKeyboardDriver.status);
 
             _MemoryManager = new MemoryManager();
-
+            _DiskDeviceDriver = new DiskDeviceDriver();
             //
             // ... more?
             //

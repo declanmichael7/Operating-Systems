@@ -5,7 +5,7 @@
     <meta name="author" content="alan G. Labouseur" />
     <link rel="stylesheet" href="tsos.css" type="text/css" media="screen" />
     <title>
-        TSOS - a browser-based virtual Operating System in TypeScript
+        MariOS - a browser-based virtual Operating System in TypeScript
     </title>
 
     <!-- Globals CONSTANTS and _Variables. Must included be first. -->
@@ -17,6 +17,8 @@
     <script type="text/javascript" src="distrib/host/cpu.js"></script>
     <script type="text/javascript" src="distrib/host/memory.js"></script>
     <script type="text/javascript" src="distrib/host/memoryAccessor.js"></script>
+    <script type="text/javascript" src="distrib/host/disk.js"></script>
+
 
     <!-- Virtual OS Routines: Make sure Kernel code is last, since it needs those above it. -->
     <script type="text/javascript" src="distrib/os/interrupt.js"></script>
@@ -30,6 +32,7 @@
     <script type="text/javascript" src="distrib/os/userCommand.js"></script>
     <script type="text/javascript" src="distrib/os/memoryManager.js"></script>
 	<script type="text/javascript" src="distrib/os/pcb.js"></script>
+    <script type="text/javascript" src="distrib/os/DiskDeviceDriver.js"></script>
     <script type="text/javascript" src="distrib/os/kernel.js"></script>
 
 
@@ -112,7 +115,7 @@
       </label>
    </div>
 
-    <div id="divMemory" style="position: relative; left:975px; bottom:573px; width:280px; height:300px; overflow-y:scroll;">
+    <div id="divMemory" style="position: relative; left:975px; bottom:590px; width:280px; height:300px; overflow-y:scroll;">
         <p>
             Memory
         </p>
@@ -1194,7 +1197,18 @@
         </table>
     </div>
 
-    <div id="divCPU" style="position:relative; left:975px; bottom:573px">
+    <div id="divDisk" style="position:relative; left: 975px; bottom: 585px; height: 150px; overflow-y:scroll;">
+         <p>
+            Disk
+        </p>
+         <table id="diskTable" style="background-color:white; width:500px;">
+             <tr>
+                 <td style="text-align:center";>Disk is not yet formatted</td>
+             </tr>
+         </table>
+    </div>
+
+    <div id="divCPU" style="position:relative; left:975px; bottom:590px">
         <p>
             CPU
         </p>
@@ -1222,7 +1236,7 @@
             </table>
     </div>
 
-    <div id="divPCB" style="position:relative; left:1060px; bottom:747px">
+    <div id="divPCB" style="position:relative; left:1060px; bottom:762px; height:175px; overflow-y: scroll;">
         <p>
             PCB
         </p>

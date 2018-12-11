@@ -64,6 +64,7 @@
     "source/host/devices.ts",
     "source/host/memory.ts",
     "source/host/memoryAccessor.ts",
+	"source/host/disk.ts",
 	"source/os/pcb.ts",
     "source/os/canvastext.ts",
     "source/os/console.ts",
@@ -75,6 +76,7 @@
     "source/os/shell.ts",
     "source/os/shellCommand.ts",
     "source/os/userCommand.ts",
-    "source/os/memoryManager.ts"
+    "source/os/memoryManager.ts",
+	"source/os/DiskDeviceDriver.ts"
   ]
 }
