@@ -447,9 +447,6 @@ module TSOS {
         }       
         public shellWhereAmI(args) {
             _StdOut.putText("You are between your keyboard and your chair");
-            _DiskDeviceDriver.krnDiskRollOut(1, 3);
-            Control.updatePCB();
-            _DiskDeviceDriver.updateDiskDisplay();
         }
       
         public shellRescue(args) {

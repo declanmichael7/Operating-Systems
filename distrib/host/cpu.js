@@ -182,7 +182,7 @@ var TSOS;
             if (pid == 'all') {
                 i = 0;
                 while (i < _Processes.length) {
-                    if (_Processes[i].State == "Resident") {
+                    if (_Processes[i].State == "Resident" || _Processes[i].State == "Disk") {
                         readyQueue.push(i);
                         _Processes[i].State = "Waiting";
                     }
@@ -191,6 +191,7 @@ var TSOS;
                 this.currentProcess = readyQueue[0];
                 this.currentPartition = _Processes[this.currentProcess].memLocation;
                 _Processes[this.currentProcess].State = "Running";
+                TSOS.Control.updatePCB();
             }
             else {
                 this.currentProcess = pid;
@@ -272,6 +273,21 @@ var TSOS;
                 console.log(readyQueue.toString());
             }
             this.currentProcess = readyQueue[0];
+            //A little lazy, but since memLocation for a process written on the disk is the tsb, it's going to be higher than 2
+            if (_Processes[this.currentProcess].memLocation > 2) {
+                if (_MemoryManager.partition0) {
+                    _DiskDeviceDriver.krnDiskRollIn(this.currentProcess, 0, 0, _Processes[this.currentProcess].memLocation);
+                }
+                else if (_MemoryManager.partition1) {
+                    _DiskDeviceDriver.krnDiskRollIn(this.currentProcess, 0, 1, _Processes[this.currentProcess].memLocation);
+                }
+                else if (_MemoryManager.partition2) {
+                    _DiskDeviceDriver.krnDiskRollIn(this.currentProcess, 0, 2, _Processes[this.currentProcess].memLocation);
+                }
+                else {
+                    _DiskDeviceDriver.krnDiskRollOut(readyQueue[readyQueue.length - 1], this.currentProcess);
+                }
+            }
             this.currentPartition = _Processes[this.currentProcess].memLocation;
             _Processes[this.currentProcess].State = "Running";
             i = 1;
