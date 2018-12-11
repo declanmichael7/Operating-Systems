@@ -195,6 +195,7 @@ var TSOS;
             else {
                 this.currentProcess = pid;
                 _Processes[pid].State = "Running";
+                this.currentPartition = _Processes[pid].memLocation;
                 console.log("Process " + pid + " is " + _Processes[pid].State);
                 readyQueue.push(pid);
             }

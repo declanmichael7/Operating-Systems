@@ -57,20 +57,64 @@ module TSOS {
             tableString += "</table>";
             table.innerHTML = tableString;
         }
-        public krnDiskRollOut(processOut){
-            //Roll out one process and roll in another
+        public krnDiskRollOut(processOut, processIn){
+            //Roll out one process...
             var process = "";
             i = 0;
             while (i <= _Processes[processOut].length) {
                 process += _MemoryAccessor.readMem(i, _Processes[processOut].memLocation) + " ";
                 i++;
             }
+            var partition = _Processes[processOut].memLocation;
             _MemoryAccessor.clearMem(_Processes[processOut].memLocation);
             _Processes[processOut].memlocation = this.krnFindFreeFrame();
             this.krnDiskLoad(this.krnFindFreeFrame(), process);
             _Processes[processOut].State = "Disk";
             Control.updatePCB();
             this.updateDiskDisplay();
+
+            //...And roll in another
+            this.krnDiskRollIn(processIn, 0, partition, _Processes[processIn].memLocation);
+        }
+
+        public krnDiskRollIn(processIn, position, partition, frame) {
+            var pos = '4';
+            i = position;
+            if ((_Disk[frame + "" + "00"]) != "02") {
+                var isLastFrame = false;
+            }
+            else {
+                isLastFrame = true;
+            }
+            while (parseInt(pos) < this.blockSize && i<256) {
+                if ((parseInt(pos) < 10)) {
+                    pos = "0" + pos;
+                }
+                _MemoryAccessor.writeMem(i, partition, _Disk[frame + "" + pos]);
+                _Disk[frame + "" + pos] = "00";
+                i++;
+                pos = (parseInt(pos) + 1).toString();
+            }
+            if (isLastFrame) {
+                console.log(partition);
+                _Processes[processIn].memLocation = partition;
+                _Processes[processIn].State = "Resident";
+                _Disk[frame + "" + "00"] = "00";
+                _Disk[frame + "" + "01"] = "00";
+                _Disk[frame + "" + "02"] = "00";
+                _Disk[frame + "" + "03"] = "00";
+                Control.updatePCB();
+                this.updateDiskDisplay();
+
+            }
+            else {
+                var nextFrame = parseInt(_Disk[frame + "01"]) + "" + parseInt(_Disk[frame + "02"]) + "" + parseInt(_Disk[frame + "03"]);
+                _Disk[frame + "" + "00"] = "00";
+                _Disk[frame + "" + "01"] = "00";
+                _Disk[frame + "" + "02"] = "00";
+                _Disk[frame + "" + "03"] = "00";
+                this.krnDiskRollIn(processIn, i, partition, nextFrame);
+            }
         }
 
         //Finds a free frame to load a process or file
