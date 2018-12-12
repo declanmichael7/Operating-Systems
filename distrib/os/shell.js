@@ -613,8 +613,10 @@ var TSOS;
             if (args == "") {
                 _StdOut.putText("Please give both a filename and the data you want to write in quotes");
             }
-            if (args[1].indexOf("\"") == -1) {
+            else if (args[0].indexOf("\"") == -1 || args[0].indexOf("\"") == args[0].lastIndexOf("\"")) {
                 _StdOut.putText("Please put the data you want to write in quotes");
+                console.log(args[0].indexOf("\""));
+                console.log(args[0].lastIndexOf("\""));
             }
             else {
                 _DiskDeviceDriver.krnWrite(args[0].toString(), args[1].toString());

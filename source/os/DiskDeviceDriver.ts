@@ -287,10 +287,41 @@ module TSOS {
         }
 
         public krnWrite(filename, data) {
-            //Write data to a file
+            //Find the tsb that matches the filename
             var dataFrame = this.findFile(filename);
-
-            this.updateDiskDisplay();
+            if (dataFrame == "File not found") {
+                _StdOut.putText("File not found");
+            }
+            else {
+                var t = parseInt(dataFrame.substr(0, 2));
+                var s = parseInt(dataFrame.substr(2, 2));
+                var b = parseInt(dataFrame.substr(4, 2));
+                //convert the data to hex
+                i = 1;
+                var dataHex = "";
+                //convert the filename to hex
+                while (i < (data.length - 1)) {
+                    var char = data.charCodeAt(i).toString(16);
+                    dataHex += char;
+                    i++;
+                }
+                console.log(dataHex);
+                var pos = '4';
+                i = 0;
+                var j = 0;
+                //write the filename in hex to the block
+                while (j <= data.length -1) {
+                    if (parseInt(pos) < 10) {
+                        pos = "0" + pos;
+                    }
+                    _Disk[t + "" + s + "" + b + "" + pos] = (dataHex.substr(i, 2));
+                    i = i + 2;
+                    pos = (parseInt(pos) + 1).toString();
+                    j++;
+                }
+                _StdOut.putText("Data written to file");
+                this.updateDiskDisplay();
+            }
         }
         public krnRead(filename) {
             //Read the contents of a file
