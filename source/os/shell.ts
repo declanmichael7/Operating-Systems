@@ -184,6 +184,12 @@ module TSOS {
                                   "<filename>- Creates a file on the disk");
             this.commandList[this.commandList.length] = sc;
 
+            //write
+            sc = new ShellCommand(this.shellWrite,
+                "write",
+                "<filename> \"data\" - Creates a file on the disk");
+            this.commandList[this.commandList.length] = sc;
+
             // Display the initial prompt.
             this.putPrompt();
         }
@@ -714,6 +720,18 @@ module TSOS {
             }
             else {
                 _StdOut.putText("Please format the disk");
+            }
+        }
+
+        public shellWrite(args) {
+            if (args == "") {
+                _StdOut.putText("Please give both a filename and the data you want to write in quotes");
+            }
+            if (args[1].indexOf("\"") == -1) {
+               _StdOut.putText("Please put the data you want to write in quotes");
+            }
+            else {
+                _DiskDeviceDriver.krnWrite(args[0].toString(), args[1].toString());
             }
         }
     }

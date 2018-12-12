@@ -252,8 +252,54 @@ var TSOS;
             }
             this.updateDiskDisplay();
         };
-        DiskDeviceDriver.prototype.krnWrite = function (filename) {
+        DiskDeviceDriver.prototype.findFile = function (filename) {
+            var fileName = filename.toString();
+            var t = 0;
+            var s = 7;
+            var b = 7;
+            var match = false;
+            //search for a block that contains the filename
+            while (s > 0 && match == false) {
+                b = 7;
+                while (b > 0 && match == false) {
+                    //if there's something in the block, check to see if it's the file you're looking for
+                    if (_Disk[t + "" + s + "" + b + "" + "00"] == "01") {
+                        //Get the hex for the file name you want to check
+                        var fileNameCheck = "";
+                        i = 0;
+                        var pos = "04";
+                        while (_Disk[t + "" + s + "" + b + "" + pos] != "00") {
+                            fileNameCheck += _Disk[t + "" + s + "" + b + "" + pos];
+                            pos = (parseInt(pos) + 1).toString();
+                            if (parseInt(pos) < 10) {
+                                pos = "0" + pos;
+                            }
+                        }
+                        //convert it into text
+                        fileNameCheck = TSOS.Utils.hextoString(fileNameCheck);
+                        //if they match, return the pointer for the file data
+                        if (fileNameCheck == filename) {
+                            var frame = "";
+                            frame += _Disk[t + "" + s + "" + b + "" + "01"];
+                            frame += _Disk[t + "" + s + "" + b + "" + "02"];
+                            frame += _Disk[t + "" + s + "" + b + "" + "03"];
+                            return frame;
+                            match == true;
+                        }
+                    }
+                    b--;
+                }
+                s--;
+            }
+            if (match == false) {
+                frame = "File not found";
+                return frame;
+            }
+        };
+        DiskDeviceDriver.prototype.krnWrite = function (filename, data) {
             //Write data to a file
+            var dataFrame = this.findFile(filename);
+            this.updateDiskDisplay();
         };
         DiskDeviceDriver.prototype.krnRead = function (filename) {
             //Read the contents of a file
