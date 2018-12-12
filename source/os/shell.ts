@@ -178,6 +178,12 @@ module TSOS {
                                   "- Formats the disk so that it can be loaded");
             this.commandList[this.commandList.length] = sc;
 
+            //create
+            sc = new ShellCommand(this.shellCreate,
+                                  "create",
+                                  "<filename>- Creates a file on the disk");
+            this.commandList[this.commandList.length] = sc;
+
             // Display the initial prompt.
             this.putPrompt();
         }
@@ -371,7 +377,7 @@ module TSOS {
                         _StdOut.putText("Tests what happens when the OS finds an error");
                         break;
                     case "load":
-                        _StdOut.putText("Checks if the user code is valid, then loads it into memory if there's space");
+                        _StdOut.putText("Checks if the user code is valid, then loads it into memory pr the disk");
                         break;
                     case "run":
                         _StdOut.putText("Executes a program in memory that you have loaded");
@@ -444,7 +450,8 @@ module TSOS {
             } else {
                 _StdOut.putText("Usage: prompt <string>  Please supply a string.");
             }
-        }       
+        }  
+        
         public shellWhereAmI(args) {
             _StdOut.putText("You are between your keyboard and your chair");
         }
@@ -470,7 +477,6 @@ module TSOS {
             var Time = new Date();
             _StdOut.putText("The current time is " + Time.getHours() +":"+ Time.getMinutes() +":"+ Time.getSeconds());
         }
-
 
         public shellStatus(args) {
             if (args.length > 0) {
@@ -698,6 +704,16 @@ module TSOS {
             }
             else {
                 _DiskDeviceDriver.krnDiskFormat();
+            }
+        }
+
+        public shellCreate(args) {
+            if (_Disk.isFormatted) {
+                _DiskDeviceDriver.krnCreate(args);
+                _StdOut.putText("File " + args + " has been created");
+            }
+            else {
+                _StdOut.putText("Please format the disk");
             }
         }
     }

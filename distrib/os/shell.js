@@ -98,6 +98,9 @@ var TSOS;
             //format
             sc = new TSOS.ShellCommand(this.shellFormat, "format", "- Formats the disk so that it can be loaded");
             this.commandList[this.commandList.length] = sc;
+            //create
+            sc = new TSOS.ShellCommand(this.shellCreate, "create", "<filename>- Creates a file on the disk");
+            this.commandList[this.commandList.length] = sc;
             // Display the initial prompt.
             this.putPrompt();
         };
@@ -281,7 +284,7 @@ var TSOS;
                         _StdOut.putText("Tests what happens when the OS finds an error");
                         break;
                     case "load":
-                        _StdOut.putText("Checks if the user code is valid, then loads it into memory if there's space");
+                        _StdOut.putText("Checks if the user code is valid, then loads it into memory pr the disk");
                         break;
                     case "run":
                         _StdOut.putText("Executes a program in memory that you have loaded");
@@ -592,6 +595,15 @@ var TSOS;
             }
             else {
                 _DiskDeviceDriver.krnDiskFormat();
+            }
+        };
+        Shell.prototype.shellCreate = function (args) {
+            if (_Disk.isFormatted) {
+                _DiskDeviceDriver.krnCreate(args);
+                _StdOut.putText("File " + args + " has been created");
+            }
+            else {
+                _StdOut.putText("Please format the disk");
             }
         };
         return Shell;

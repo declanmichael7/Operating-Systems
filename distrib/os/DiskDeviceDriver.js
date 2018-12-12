@@ -160,7 +160,6 @@ var TSOS;
             var b = parseInt(firstFrame.charAt(2));
             //Sets the first byte of the tsb to 01 so we know there's something in that frame
             _Disk[t + "" + s + "" + b + "00"] = "01";
-            i = 0;
             //If it's too large for one frame...
             if (program.length >= 180) {
                 //make a temp string to hold alll that will fit in the current frame
@@ -176,6 +175,7 @@ var TSOS;
             }
             var pos = '4';
             var opCode;
+            i = 0;
             while (i <= thisFrame.length) {
                 opCode = thisFrame.charAt(i - 1) + thisFrame.charAt(i);
                 if (((i - 1) % 3) == 0) {
@@ -204,6 +204,53 @@ var TSOS;
         };
         DiskDeviceDriver.prototype.krnCreate = function (filename) {
             //Create a file
+            var fileName = filename.toString();
+            var t = 0;
+            var s = 7;
+            var b = 7;
+            var match = false;
+            //search for a block to put the pointer to the file data and put the name in
+            while (s < this.sectorNum && match == false) {
+                b = 7;
+                while (b < this.blockNum && match == false) {
+                    //if there's an open block
+                    if (_Disk[t + "" + s + "" + b + "" + "00"] == "00") {
+                        var fileNameHex = "";
+                        i = 0;
+                        //convert the filename to hex
+                        while (i < fileName.length) {
+                            var char = fileName.charCodeAt(i).toString(16);
+                            fileNameHex += char;
+                            i++;
+                        }
+                        //find a frame to put the file data in and put '01' and the tsb in the first four bytes
+                        var fileFrame = _DiskDeviceDriver.krnFindFreeFrame();
+                        _Disk[t + "" + s + "" + b + "" + "00"] = "01";
+                        _Disk[t + "" + s + "" + b + "" + "01"] = "0" + fileFrame.charAt(0);
+                        _Disk[t + "" + s + "" + b + "" + "02"] = "0" + fileFrame.charAt(1);
+                        _Disk[t + "" + s + "" + b + "" + "03"] = "0" + fileFrame.charAt(2);
+                        //Put a 01 in the first byte of that frame so it can be written to
+                        _Disk[fileFrame.charAt(0) + "" + fileFrame.charAt(1) + "" + fileFrame.charAt(2) + "" + "00"] = "01";
+                        var pos = '4';
+                        i = 0;
+                        var j = 0;
+                        //write the filename in hex to the block
+                        while (j <= fileName.length) {
+                            if (parseInt(pos) < 10) {
+                                pos = "0" + pos;
+                            }
+                            _Disk[t + "" + s + "" + b + "" + pos] = (fileNameHex.substr(i, 2));
+                            i = i + 2;
+                            pos = (parseInt(pos) + 1).toString();
+                            j++;
+                        }
+                        match = true;
+                    }
+                    b--;
+                }
+                s--;
+            }
+            this.updateDiskDisplay();
         };
         DiskDeviceDriver.prototype.krnWrite = function (filename) {
             //Write data to a file
