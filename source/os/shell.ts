@@ -427,6 +427,24 @@ module TSOS {
                     case "getschedule":
                         _StdOut.putText("Returns the current scheduling algorthm");
                         break;
+                    case "format":
+                        _StdOut.putText("Formats the disk so that you can load processes or files onto it");
+                        break;
+                    case "create":
+                        _StdOut.putText("Creates a file on the disk with the given filename");
+                        break;
+                    case "write":
+                        _StdOut.putText("Writes data to a file on the disk");
+                        break;
+                    case "read":
+                        _StdOut.putText("Returns the data in a file on the disk");
+                        break;
+                    case "delete":
+                        _StdOut.putText("Removes a file from the disk");
+                        break;
+                    case "ls":
+                        _StdOut.putText("Returns a list of all file names");
+                        break;
                     default:
                         _StdOut.putText("No manual entry for " + args[0] + ".");
                 }
