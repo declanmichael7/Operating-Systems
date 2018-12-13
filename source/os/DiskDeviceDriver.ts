@@ -414,5 +414,39 @@ module TSOS {
                 this.updateDiskDisplay();
             }
         }
+
+        public krnList() {
+            var t = 0;
+            var s = 7;
+            var b = 7;
+            //search for a block that contains the filename
+            while (s > 0) {
+                b = 7;
+                while (b > 0) {
+                    //if there's something in the block, get the name of the file
+                    if (_Disk[t + "" + s + "" + b + "" + "00"] == "01") {
+                        //Get the hex for the file name
+                        var fileNameCheck = "";
+                        i = 0;
+                        var pos = "04";
+                        while (_Disk[t + "" + s + "" + b + "" + pos] != "00") {
+                            fileNameCheck += _Disk[t + "" + s + "" + b + "" + pos];
+                            pos = (parseInt(pos) + 1).toString();
+                            if (parseInt(pos) < 10) {
+                                pos = "0" + pos;
+                            }
+                        }
+                        //convert it into text
+                        fileNameCheck = Utils.hextoString(fileNameCheck);
+                        //And output it to the screen
+                        _StdOut.putText(fileNameCheck);
+                        _StdOut.advanceLine();
+                    }
+                    b--;
+                }
+                s--;
+            }
+        }
+
     }
 }

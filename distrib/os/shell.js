@@ -110,6 +110,9 @@ var TSOS;
             //delete
             sc = new TSOS.ShellCommand(this.shellDelete, "delete", "<filename>- Deletes a file on the disk");
             this.commandList[this.commandList.length] = sc;
+            //ls
+            sc = new TSOS.ShellCommand(this.shellLS, "ls", "- Returns the names of all of the files on the disk");
+            this.commandList[this.commandList.length] = sc;
             // Display the initial prompt.
             this.putPrompt();
         };
@@ -657,6 +660,14 @@ var TSOS;
                 else {
                     _StdOut.putText("Please format the disk");
                 }
+            }
+        };
+        Shell.prototype.shellLS = function () {
+            if (_Disk.isFormatted) {
+                _DiskDeviceDriver.krnList();
+            }
+            else {
+                _StdOut.putText("Please format the disk");
             }
         };
         return Shell;
