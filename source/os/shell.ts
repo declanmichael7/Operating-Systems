@@ -190,6 +190,18 @@ module TSOS {
                 "<filename> \"data\" - Creates a file on the disk");
             this.commandList[this.commandList.length] = sc;
 
+            //read
+            sc = new ShellCommand(this.shellRead,
+                                  "read",
+                                  "<filename>- Outputs the data from a file on the disk");
+            this.commandList[this.commandList.length] = sc;
+
+            //delete
+            sc = new ShellCommand(this.shellDelete,
+                                  "delete",
+                                  "<filename>- Deletes a file on the disk");
+            this.commandList[this.commandList.length] = sc;
+
             // Display the initial prompt.
             this.putPrompt();
         }
@@ -714,6 +726,9 @@ module TSOS {
         }
 
         public shellCreate(args) {
+            if (args == "") {
+                _StdOut.putText("Please give the file a name");
+            }
             if (_Disk.isFormatted) {
                 _DiskDeviceDriver.krnCreate(args);
                 _StdOut.putText("File " + args + " has been created");
@@ -727,14 +742,43 @@ module TSOS {
             if (args == "") {
                 _StdOut.putText("Please give both a filename and the data you want to write in quotes");
             }
-            else if (args[0].indexOf("\"") == -1 || args[0].indexOf("\"") == args[0].lastIndexOf("\"")) {
+            //There's an issue with this where you can't write something with spaces
+            else if (args[1].indexOf("\"") == -1 || args[1].indexOf("\"") == args[1].lastIndexOf("\"")) {
                 _StdOut.putText("Please put the data you want to write in quotes");
-
-                console.log(args[0].indexOf("\""));
-                console.log(args[0].lastIndexOf("\""));
+            }
+            else if (!_Disk.isFormatted) {
+                _StdOut.putText("Please format the disk");
             }
             else {
                 _DiskDeviceDriver.krnWrite(args[0].toString(), args[1].toString());
+            }
+        }
+
+        public shellRead(args) {
+            if (args == "") {
+                _StdOut.putText("Please give the name of the file you want to read");
+            }
+            else {
+                if (_Disk.isFormatted) {
+                    _DiskDeviceDriver.krnRead(args[0].toString());
+                }
+                else {
+                    _StdOut.putText("Please format the disk");
+                }
+            }
+        }
+
+        public shellDelete(args) {
+            if (args == "") {
+                _StdOut.putText("Please give the name of the file you want to delete");
+            }
+            else {
+                if (_Disk.isFormatted) {
+                    _DiskDeviceDriver.krnDelete(args[0].toString());
+                }
+                else {
+                    _StdOut.putText("Please format the disk");
+                }
             }
         }
     }

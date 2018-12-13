@@ -284,7 +284,7 @@ var TSOS;
                             frame += _Disk[t + "" + s + "" + b + "" + "02"];
                             frame += _Disk[t + "" + s + "" + b + "" + "03"];
                             return frame;
-                            match == true;
+                            match = true;
                         }
                     }
                     b--;
@@ -309,17 +309,16 @@ var TSOS;
                 //convert the data to hex
                 i = 1;
                 var dataHex = "";
-                //convert the filename to hex
+                //convert the data to hex
                 while (i < (data.length - 1)) {
                     var char = data.charCodeAt(i).toString(16);
                     dataHex += char;
                     i++;
                 }
-                console.log(dataHex);
                 var pos = '4';
                 i = 0;
                 var j = 0;
-                //write the filename in hex to the block
+                //write the data in hex to the block
                 while (j <= data.length - 1) {
                     if (parseInt(pos) < 10) {
                         pos = "0" + pos;
@@ -335,9 +334,97 @@ var TSOS;
         };
         DiskDeviceDriver.prototype.krnRead = function (filename) {
             //Read the contents of a file
+            var dataFrame = this.findFile(filename);
+            if (dataFrame == "File not found") {
+                _StdOut.putText("File not found");
+            }
+            else {
+                var t = parseInt(dataFrame.substr(0, 2));
+                var s = parseInt(dataFrame.substr(2, 2));
+                var b = parseInt(dataFrame.substr(4, 2));
+                var pos = "04";
+                var dataHex = "";
+                //While the value of the block isn't 00, add it to the hex string
+                while (_Disk[t + "" + s + "" + b + "" + pos] != "00") {
+                    dataHex += _Disk[t + "" + s + "" + b + "" + pos];
+                    pos = (parseInt(pos) + 1).toString();
+                    if (parseInt(pos) < 10) {
+                        pos = "0" + pos;
+                    }
+                }
+                //Convert it to text
+                var dataString = TSOS.Utils.hextoString(dataHex);
+                //And output it
+                _StdOut.putText(dataString);
+            }
         };
         DiskDeviceDriver.prototype.krnDelete = function (filename) {
             //Delete a file
+            var fileName = filename.toString();
+            var t = 0;
+            var s = 7;
+            var b = 7;
+            var match = false;
+            //search for a block that contains the filename
+            while (s > 0 && match == false) {
+                b = 7;
+                while (b > 0 && match == false) {
+                    //if there's something in the block, check to see if it's the file you're looking for
+                    if (_Disk[t + "" + s + "" + b + "" + "00"] == "01") {
+                        //Get the hex for the file name you want to check
+                        var fileNameCheck = "";
+                        i = 0;
+                        var pos = "04";
+                        while (_Disk[t + "" + s + "" + b + "" + pos] != "00") {
+                            fileNameCheck += _Disk[t + "" + s + "" + b + "" + pos];
+                            pos = (parseInt(pos) + 1).toString();
+                            if (parseInt(pos) < 10) {
+                                pos = "0" + pos;
+                            }
+                        }
+                        //convert it into text
+                        fileNameCheck = TSOS.Utils.hextoString(fileNameCheck);
+                        //if they match, save the pointer for the file data
+                        if (fileNameCheck == filename) {
+                            var frame = "";
+                            frame += _Disk[t + "" + s + "" + b + "" + "01"];
+                            frame += _Disk[t + "" + s + "" + b + "" + "02"];
+                            frame += _Disk[t + "" + s + "" + b + "" + "03"];
+                            console.log(frame);
+                            console.log(t + "" + s + "" + b);
+                            //And wipe the pointer location
+                            pos = "00";
+                            while (parseInt(pos) < this.blockSize) {
+                                console.log(pos);
+                                _Disk[t + "" + s + "" + b + "" + pos] = "00";
+                                console.log(_Disk[t + "" + s + "" + b + "" + pos]);
+                                pos = (parseInt(pos) + 1).toString();
+                                if (parseInt(pos) < 10) {
+                                    pos = "0" + pos;
+                                }
+                            }
+                            match = true;
+                        }
+                    }
+                    b--;
+                }
+                s--;
+                //Now, go the data location
+                t = parseInt(frame.substr(0, 2));
+                s = parseInt(frame.substr(2, 2));
+                b = parseInt(frame.substr(4, 2));
+                pos = "00";
+                //And wipe all of it's data too
+                while (parseInt(pos) < this.blockSize) {
+                    _Disk[t + "" + s + "" + b + "" + pos] = "00";
+                    pos = (parseInt(pos) + 1).toString();
+                    if (parseInt(pos) < 10) {
+                        pos = "0" + pos;
+                    }
+                }
+                _StdOut.putText("File Deleted");
+                this.updateDiskDisplay();
+            }
         };
         return DiskDeviceDriver;
     }(TSOS.DeviceDriver));
